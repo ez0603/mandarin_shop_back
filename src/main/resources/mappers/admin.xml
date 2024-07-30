@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mandarin_shop_back.repository.AdminMapper">
+    <resultMap id="AdminResultMap" type="com.example.mandarin_shop_back.entity.account.Admin">
+        <id property="adminId" column="admin_id" />
+        <result property="adminName" column="admin_name" />
+        <result property="name" column="name" />
+        <result property="adminPassword" column="adminPassword" />
+        <result property="email" column="email" />
+        <result property="createDate" column="create_date" />
+        <result property="updateDate" column="update_date" />
+    </resultMap>
+
+    <insert id="saveAdmin"
+            parameterType="com.example.mandarin_shop_back.entity.account.Admin"
+            keyProperty="adminId"
+            useGeneratedKeys="true"
+    >
+        insert into
+        admin_tb
+        values
+        (0, #{name}, #{adminName}, #{adminPassword}, #{email}, now(), now())
+    </insert>
+</mapper>
