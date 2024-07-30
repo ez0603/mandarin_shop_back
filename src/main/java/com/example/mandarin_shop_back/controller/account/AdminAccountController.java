@@ -34,6 +34,7 @@ public class AdminAccountController {
     @ValidAspect
     @PutMapping("/password")
     public ResponseEntity<?> editPassword(@Valid @RequestBody EditPasswordReqDto editPasswordReqDto, BindingResult bindingResult) {
+
         adminAccountService.editPassword(editPasswordReqDto);
         return ResponseEntity.ok(true);
     }

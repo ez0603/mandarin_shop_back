@@ -14,6 +14,8 @@ public interface AdminMapper {
 
     public Admin findAdminByAdminId(int adminId);
 
+    public int modifyPassword(Admin admin);
+
     public Admin findAccountByNameAndEmail(@Param("name") String name, @Param("email") String email);
 
     public Admin findAccountByUserNameAndEmail(@Param("adminName") String adminName, @Param("email") String email);

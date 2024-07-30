@@ -42,7 +42,7 @@
             parameterType="string"
             resultMap="AdminResultMap"
     >
-        select
+        SELECT
             at.admin_id,
             at.name,
             at.admin_name,
@@ -54,12 +54,12 @@
             rart.role_id,
             rt.role_name,
             rt.role_name_kor
-        from
-        admin_tb at
-            left outer join role_admin_register_tb rart on(rart.admin_id = at.admin_id)
-            left outer join role_tb rt on(rt.role_id = rart.role_id)
-        where
-            admin_name = #{adminName}
+        FROM
+            admin_tb at
+            LEFT OUTER JOIN role_admin_register_tb rart ON rart.admin_id = at.admin_id
+            LEFT OUTER JOIN role_tb rt ON rt.role_id = rart.role_id
+        WHERE
+            at.admin_name = #{adminName}
     </select>
 
     <select id="findAdminByAdminId"
@@ -113,6 +113,17 @@
         values(0, #{adminId}, 1, now(), now())
     </insert>
 
+    <update id="modifyPassword"
+            parameterType="com.example.mandarin_shop_back.entity.account.Admin"
+    >
+        update
+        admin_tb
+        set
+        password = #{password},
+        update_date = now()
+        where
+        admin_id = #{adminId}
+    </update>
 
 
 </mapper>
