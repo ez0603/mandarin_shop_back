@@ -6,9 +6,9 @@
 <mapper namespace="com.example.mandarin_shop_back.repository.AdminMapper">
     <resultMap id="AdminResultMap" type="com.example.mandarin_shop_back.entity.account.Admin">
         <id property="adminId" column="admin_id" />
-        <result property="adminName" column="admin_name" />
         <result property="name" column="name" />
-        <result property="adminPassword" column="adminPassword" />
+        <result property="adminName" column="admin_name" />
+        <result property="adminPassword" column="admin_password" />
         <result property="email" column="email" />
         <result property="createDate" column="create_date" />
         <result property="updateDate" column="update_date" />
@@ -20,8 +20,26 @@
             useGeneratedKeys="true"
     >
         insert into
-        admin_tb
+            admin_tb
         values
-        (0, #{name}, #{adminName}, #{adminPassword}, #{email}, now(), now())
+            (0, #{name}, #{adminName}, #{adminPassword}, #{email}, now(), now())
     </insert>
+
+    <select id="findAdminByUsername"
+            parameterType="string"
+            resultMap="AdminResultMap"
+    >
+        select
+            admin_id,
+            name,
+            admin_name,
+            admin_password,
+            email,
+            create_date,
+            update_date
+        from
+            admin_tb
+        where
+            admin_name = #{adminName}
+    </select>
 </mapper>

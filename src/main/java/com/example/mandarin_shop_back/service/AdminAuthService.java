@@ -44,7 +44,7 @@ public class AdminAuthService {
         if( admin == null) {
             throw new UsernameNotFoundException("사용자 정보를 확인하세요");
         }
-        if(!passwordEncoder.matches(adminSignupReqDto.getPassword(), admin.getAdminPassword())) {
+        if(!passwordEncoder.matches(adminSignupReqDto.getAdminPassword(), admin.getAdminPassword())) {
             throw new BadCredentialsException("사용자 정보를 확인하세요");
         }
         System.out.println(123);
