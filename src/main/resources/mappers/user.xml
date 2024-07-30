@@ -69,4 +69,25 @@
         where
             user_id = #{userId}
     </update>
+
+    <update id="modifyUserPassword"
+            parameterType="com.example.mandarin_shop_back.entity.user.User">
+        update
+            user_tb
+        set
+            password = #{password},
+            update_date = now()
+        where
+            user_id = #{userId}
+    </update>
+
+    <select id="findAccountUserByNameAndEmail" resultMap="UserResultMap">
+        select
+            *
+        from
+            user_tb
+        where
+            customer_name = #{customerName}
+            and email = #{email}
+    </select>
 </mapper>
