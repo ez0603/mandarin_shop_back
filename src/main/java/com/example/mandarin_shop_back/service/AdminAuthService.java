@@ -18,36 +18,34 @@ import java.util.Map;
 public class AdminAuthService {
 
     @Autowired
-    AdminMapper adminMapper;
+    private AdminMapper adminMapper;
 
     @Autowired
-    JwtProvider jwtProvider;
+    private JwtProvider jwtProvider;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @Transactional(rollbackFor = Exception.class)
     public void adminSignup(AdminSignupReqDto adminSignupReqDto) {
-        System.out.println("서비스 진입");
-        int successCount = 0;
         Admin admin = adminSignupReqDto.toEntity(passwordEncoder);
 
-        successCount += adminMapper.saveAdmin(admin);
+        int successCount = adminMapper.saveAdmin(admin);
+        successCount += adminMapper.saveRole(admin.getAdminId(), 1);
 
-        if(successCount < 1) {
-            throw new SaveException(Map.of("adminSignup 오류", "정상적으로 회원가입이 되지 않았습니다."));
+        if (successCount < 2) {
+            throw new SaveException();
         }
     }
 
     public String adminSignin(AdminSignupReqDto adminSignupReqDto) {
         Admin admin = adminMapper.findAdminByUsername(adminSignupReqDto.getAdminName());
-        if( admin == null) {
+        if (admin == null) {
             throw new UsernameNotFoundException("사용자 정보를 확인하세요");
         }
-        if(!passwordEncoder.matches(adminSignupReqDto.getAdminPassword(), admin.getAdminPassword())) {
+        if (!passwordEncoder.matches(adminSignupReqDto.getAdminPassword(), admin.getAdminPassword())) {
             throw new BadCredentialsException("사용자 정보를 확인하세요");
         }
-        System.out.println(123);
         return jwtProvider.generateToken(admin);
     }
 }

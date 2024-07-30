@@ -8,7 +8,7 @@ public class SaveException extends RuntimeException{
 
     @Getter
     Map<String, String> errorMap;
-    public SaveException(Map<String, String> errorMap) {
+    public SaveException() {
         super("데이터 저장 오류.");
         this.errorMap = errorMap;
     }
