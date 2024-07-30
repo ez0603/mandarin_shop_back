@@ -39,7 +39,7 @@ public class AdminAccountController {
     }
 
     @GetMapping("/id")
-    public ResponseEntity<?> getName(@RequestParam(value = "adminName") String adminName, @RequestParam(value = "email")String email) {
-        return ResponseEntity.ok(adminAccountService.findAccountByNameAndEmail(adminName, email));
+    public ResponseEntity<?> getAdminName(@RequestParam(value = "name") String name, @RequestParam(value = "email")String email) {
+        return ResponseEntity.ok(adminAccountService.findAccountByNameAndEmail(name, email));
     }
 }

@@ -59,7 +59,7 @@
             left outer join role_admin_register_tb rart on(rart.admin_id = at.admin_id)
             left outer join role_tb rt on(rt.role_id = rart.role_id)
         where
-        admin_name = #{adminName}
+            admin_name = #{adminName}
     </select>
 
     <select id="findAdminByAdminId"
@@ -67,7 +67,6 @@
     >
         select
             admin_id,
-            role_id,
             admin_name,
             username,
             password,
@@ -86,9 +85,28 @@
         from
             admin_tb
         where
+            name = #{name}
+            and email = #{email}
+    </select>
+
+    <select id="findAccountByUserNameAndEmail" resultMap="AdminResultMap">
+        select
+            *
+        from
+            admin_tb
+        where
             admin_name = #{adminName}
             and email = #{email}
     </select>
+
+    <update id="updateAccountTemporaryPw">
+        update
+            admin_tb
+        set
+            password = #{tempPassword}
+        where
+            admin_id = #{adminId}
+    </update>
 
     <insert id="saveRole" parameterType="integer">
         insert into role_admin_register_tb

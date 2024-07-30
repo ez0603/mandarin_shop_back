@@ -10,9 +10,13 @@ public interface AdminMapper {
 
     public int saveRole(@Param("adminId") int adminId, @Param("roleId") int roleId);
 
-    public Admin findAdminByUsername(String username);
+    public Admin findAdminByUsername(String adminName);
 
     public Admin findAdminByAdminId(int adminId);
 
-    public Admin findAccountByNameAndEmail(@Param("adminName") String name, @Param("email") String email);
+    public Admin findAccountByNameAndEmail(@Param("name") String name, @Param("email") String email);
+
+    public Admin findAccountByUserNameAndEmail(@Param("adminName") String adminName, @Param("email") String email);
+
+    public int updateAccountTemporaryPw(@Param("adminId") int adminId, @Param("tempPassword") String tempPassword);
 }

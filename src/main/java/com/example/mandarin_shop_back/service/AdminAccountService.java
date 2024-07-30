@@ -38,7 +38,11 @@ public class AdminAccountService {
     }
 
     public String findAccountByNameAndEmail(String name, String email) {
-        String aminaName = adminMapper.findAccountByNameAndEmail(name, email).getAdminName();
-        return aminaName;
+        Admin admin = adminMapper.findAccountByNameAndEmail(name, email);
+        if (admin != null) {
+            return admin.getAdminName(); // 아이디가 저장된 필드 사용
+        }
+        return null; // 계정이 존재하지 않을 경우 null 반환 또는 적절한 처리
     }
+
 }
