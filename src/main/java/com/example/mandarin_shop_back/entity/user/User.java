@@ -28,13 +28,12 @@ public class User {
     private List<UserRoleRegister> userRoleRegisters;
 
     public PrincipalUser toPrincipalUser() {
-        // Check for null roles and set to an empty list if null
         List<String> roles = (roleNameKor != null) ? List.of(roleNameKor) : Collections.emptyList();
 
         return PrincipalUser.builder()
-                .adminId(this.userId) // Ensure to set this appropriately
-                .adminName(this.username) // Ensure to set this appropriately
-                .email(this.email) // Ensure email is included if needed in PrincipalUser
+                .adminId(this.userId)
+                .adminName(this.username)
+                .email(this.email)
                 .roles(roles)
                 .build();
     }
