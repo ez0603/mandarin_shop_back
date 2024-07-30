@@ -59,7 +59,7 @@ public class ValidAop {
                 return proceedingJoinPoint.proceed();
             }
 
-            if (adminMapper.findAdminByUsername(adminSignupReqDto.getName()) != null) {
+            if (adminMapper.findAdminByUsername(adminSignupReqDto.getAdminName()) != null) {
                 ObjectError objectError = new FieldError("username", "username", "이미 존재하는 아이디입니다");
                 bindingResult.addError(objectError);
             }

@@ -13,7 +13,9 @@ import java.util.List;
 @Data
 public class PrincipalUser implements UserDetails {
     private int adminId;
+    private int roleId;
     private String name;
+    private String username;
     private String adminName;
     private String email;
 
@@ -24,11 +26,6 @@ public class PrincipalUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return "";
-    }
-
-    @Override
-    public String getUsername() {
         return "";
     }
 
@@ -52,4 +49,3 @@ public class PrincipalUser implements UserDetails {
         return true;
     }
 }
-

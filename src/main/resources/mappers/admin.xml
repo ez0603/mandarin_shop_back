@@ -25,21 +25,76 @@
             (0, #{name}, #{adminName}, #{adminPassword}, #{email}, now(), now())
     </insert>
 
+    <resultMap id="RoleResultMap" type="com.example.mandarin_shop_back.entity.account.Role">
+        <id property="roleId" column="user_id" />
+        <result property="roleName" column="role_name" />
+        <result property="roleNameKor" column="role_name_kor" />
+    </resultMap>
+
+    <resultMap id="RoleAdminRegisterResultMap" type="com.example.mandarin_shop_back.entity.account.AdminRoleRegister">
+        <id property="roleAdminRegisterId" column="role_admin_register_id" />
+        <result property="adminId" column="admin_id" />
+        <result property="roleId" column="role_id" />
+        <association property="role" resultMap="RoleResultMap" />
+    </resultMap>
+
     <select id="findAdminByUsername"
             parameterType="string"
             resultMap="AdminResultMap"
     >
         select
+            at.admin_id,
+            at.name,
+            at.admin_name,
+            at.admin_password,
+            at.email,
+            at.create_date,
+            at.update_date,
+            rart.role_admin_register_id,
+            rart.role_id,
+            rt.role_name,
+            rt.role_name_kor
+        from
+        admin_tb at
+            left outer join role_admin_register_tb rart on(rart.admin_id = at.admin_id)
+            left outer join role_tb rt on(rt.role_id = rart.role_id)
+        where
+        admin_name = #{adminName}
+    </select>
+
+    <select id="findAdminByAdminId"
+            resultMap="AdminResultMap"
+    >
+        select
             admin_id,
-            name,
+            role_id,
             admin_name,
-            admin_password,
+            username,
+            password,
             email,
             create_date,
             update_date
         from
             admin_tb
         where
-            admin_name = #{adminName}
+            admin_id = #{adminId}
     </select>
+
+    <select id="findAccountByNameAndEmail" resultMap="AdminResultMap">
+        select
+            *
+        from
+            admin_tb
+        where
+            admin_name = #{adminName}
+            and email = #{email}
+    </select>
+
+    <insert id="saveRole" parameterType="integer">
+        insert into role_admin_register_tb
+        values(0, #{adminId}, 1, now(), now())
+    </insert>
+
+
+
 </mapper>

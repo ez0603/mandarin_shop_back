@@ -34,12 +34,12 @@ public class JwtProvider {
 
     public String generateToken(Admin admin) { // JWT 생성
         int adminId = admin.getAdminId();
-        String username = admin.getName();
+        String adminName = admin.getAdminName();
         Date expireDate = new Date(new Date().getTime() +( 1000 * 60 * 60 * 24 * 20));
 
         String accessToken = Jwts.builder()
                 .claim("adminId", adminId) //제이슨 형식으로 키밸류 들어감
-                .claim("username", username)
+                .claim("adminName", adminName)
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -70,8 +70,8 @@ public class JwtProvider {
         return claims;
     }
     public Authentication getAuthentication(Claims claims) { // 사용자 인증
-        String username = claims.get("username").toString();
-        Admin admin = adminMapper.findAdminByUsername(username);
+        String adminName = claims.get("adminName").toString();
+        Admin admin = adminMapper.findAdminByUsername(adminName);
         if(admin == null) {
             return null;
         }

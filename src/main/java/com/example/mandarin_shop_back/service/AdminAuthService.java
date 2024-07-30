@@ -40,7 +40,7 @@ public class AdminAuthService {
     }
 
     public String adminSignin(AdminSignupReqDto adminSignupReqDto) {
-        Admin admin = adminMapper.findAdminByUsername(adminSignupReqDto.getName());
+        Admin admin = adminMapper.findAdminByUsername(adminSignupReqDto.getAdminName());
         if( admin == null) {
             throw new UsernameNotFoundException("사용자 정보를 확인하세요");
         }

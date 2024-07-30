@@ -13,8 +13,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Admin {
-
     private int adminId;
+    private int roleId;
     private String name;
     private String adminName;
     private String adminPassword;
@@ -25,6 +25,7 @@ public class Admin {
     public PrincipalUser toPrincipalUser() {
         return PrincipalUser.builder()
                 .adminId(adminId)
+                .roleId(roleId)
                 .name(name)
                 .adminName(adminName)
                 .email(email)
