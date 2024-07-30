@@ -9,8 +9,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
+
 @Service
 public class AdminAccountService {
     @Autowired
@@ -19,21 +21,13 @@ public class AdminAccountService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Transactional
     public void editPassword(EditPasswordReqDto editPasswordReqDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String adminName = (authentication != null) ? authentication.getName() : null;
-        System.out.println("Authentication object: " + authentication);
-        System.out.println("Admin name: " + adminName);
-
-        if (adminName == null || adminName.isEmpty()) {
-            throw new ValidException(Map.of("error", "계정을 찾을 수 없습니다."));
-        }
-
-        Admin admin = adminMapper.findAdminByUsername(adminName);
+        Admin admin = adminMapper.findAdminByUsername(authentication.getName());
         if (admin == null) {
             throw new ValidException(Map.of("error", "계정을 찾을 수 없습니다."));
         }
-
 
         if (!passwordEncoder.matches(editPasswordReqDto.getOldPassword(), admin.getAdminPassword())) {
             throw new ValidException(Map.of("oldPassword", "비밀번호 인증에 실패하였습니다. \n다시 입력해주세요."));
@@ -49,7 +43,10 @@ public class AdminAccountService {
 
         // 비밀번호 업데이트
         admin.setAdminPassword(passwordEncoder.encode(editPasswordReqDto.getNewPassword()));
-//        adminMapper.modifyPassword(admin); // 또는 이와 유사한 데이터베이스 업데이트 메서드 호출
+        adminMapper.modifyPassword(admin); // 실제 데이터베이스에 업데이트하는 코드
+
+        // 세션 무효화 또는 재인증 처리
+        SecurityContextHolder.clearContext(); // 현재 세션을 무효화합니다.
     }
 
     public String findAccountByNameAndEmail(String name, String email) {

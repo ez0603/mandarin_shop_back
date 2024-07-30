@@ -114,16 +114,16 @@
     </insert>
 
     <update id="modifyPassword"
-            parameterType="com.example.mandarin_shop_back.entity.account.Admin"
-    >
+            parameterType="com.example.mandarin_shop_back.entity.account.Admin">
         update
-        admin_tb
+            admin_tb
         set
-        password = #{password},
-        update_date = now()
+            admin_password = #{adminPassword},
+            update_date = now()
         where
-        admin_id = #{adminId}
+            admin_id = #{adminId}
     </update>
+
 
 
 </mapper>
