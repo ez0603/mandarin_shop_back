@@ -24,7 +24,26 @@
         values(0, 2, #{customerName}, #{username}, #{password}, #{email}, now(), now())
     </insert>
 
-    <select id="findAdminByAdminId"
+    <select id="findUserByUsername"
+            parameterType="string"
+            resultMap="UserResultMap"
+    >
+        select
+            user_id,
+            role_id,
+            customer_name,
+            username,
+            password,
+            email,
+            create_date,
+            update_date
+        from
+            user_tb
+        where
+            username = #{username}
+    </select>
+
+    <select id="findUserByUserId"
             resultMap="UserResultMap"
     >
         select
@@ -41,4 +60,13 @@
         where
             user_id = #{userId}
     </select>
+
+    <update id="updateUserAccountTemporaryPw">
+        update
+            user_tb
+        set
+            password = #{tempPassword}
+        where
+            user_id = #{userId}
+    </update>
 </mapper>

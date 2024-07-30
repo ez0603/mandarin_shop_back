@@ -1,5 +1,6 @@
 package com.example.mandarin_shop_back.controller.user;
 
+import com.example.mandarin_shop_back.dto.account.request.AdminSignupReqDto;
 import com.example.mandarin_shop_back.dto.user.request.UserSignupReqDto;
 import com.example.mandarin_shop_back.entity.user.User;
 import com.example.mandarin_shop_back.repository.UserMapper;
@@ -23,11 +24,16 @@ public class UserAuthController {
     private UserAuthService userAuthService;
 
     @PostMapping("/signup") // 전화번호 가입
-    public ResponseEntity<?> signup(@Valid @RequestBody UserSignupReqDto userSignupReqDto, BindingResult bindingResult) {
+    public ResponseEntity<?> userSignup(@Valid @RequestBody UserSignupReqDto userSignupReqDto, BindingResult bindingResult) {
         System.out.println("유저 로그인 들어옴??");
         userAuthService.signup(userSignupReqDto);
 
         return ResponseEntity.created(null).body(true);
     }
 
+    @PostMapping("/signin")
+    public ResponseEntity<?> userSignin(@RequestBody UserSignupReqDto userSignupReqDto) {
+        System.out.println(123);
+        return ResponseEntity.ok(userAuthService.userSignin(userSignupReqDto));
+    }
 }

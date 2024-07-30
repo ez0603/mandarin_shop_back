@@ -2,7 +2,7 @@ package com.example.mandarin_shop_back.controller.account;
 
 import com.example.mandarin_shop_back.aop.annotation.ValidAspect;
 import com.example.mandarin_shop_back.dto.account.request.AdminSignupReqDto;
-import com.example.mandarin_shop_back.service.AdminAuthService;
+import com.example.mandarin_shop_back.service.admin.AdminAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;

@@ -1,4 +1,4 @@
-package com.example.mandarin_shop_back.service;
+package com.example.mandarin_shop_back.service.admin;
 
 import com.example.mandarin_shop_back.dto.account.request.EditPasswordReqDto;
 import com.example.mandarin_shop_back.entity.account.Admin;

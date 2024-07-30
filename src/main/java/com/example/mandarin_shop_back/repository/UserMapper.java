@@ -1,13 +1,17 @@
 package com.example.mandarin_shop_back.repository;
 
-import com.example.mandarin_shop_back.entity.account.Admin;
 import com.example.mandarin_shop_back.entity.user.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface UserMapper {
     public int saveUser(User user);
 
-    public Admin findUserByUserId(int userId);
+    public User findUserByUsername(String username);
+
+    public User findUserByUserId(int userId);
+
+    public int updateUserAccountTemporaryPw(@Param("userId") int adminId, @Param("tempPassword") String tempPassword);
 
 }

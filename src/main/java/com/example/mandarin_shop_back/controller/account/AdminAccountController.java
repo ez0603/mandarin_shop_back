@@ -5,7 +5,7 @@ import com.example.mandarin_shop_back.aop.annotation.ParamsPrintAspect;
 import com.example.mandarin_shop_back.aop.annotation.ValidAspect;
 import com.example.mandarin_shop_back.dto.account.request.EditPasswordReqDto;
 import com.example.mandarin_shop_back.security.PrincipalUser;
-import com.example.mandarin_shop_back.service.AdminAccountService;
+import com.example.mandarin_shop_back.service.admin.AdminAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
