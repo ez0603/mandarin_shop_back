@@ -9,10 +9,45 @@
         <result property="statusName" column="status_name" />
     </resultMap>
 
+    <resultMap id="orderResultMap" type="com.example.mandarin_shop_back.entity.order.Order">
+        <id property="orderId" column="order_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="orderDate" column="order_date"/>
+        <result property="orderTotalPrice" column="order_total_price"/>
+        <result property="shippingAddress" column="shipping_address"/>
+        <result property="orderStatusId" column="order_status_id"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
     <insert id="saveOrderStatus" parameterType="com.example.mandarin_shop_back.entity.order.OrderStatus" >
         insert into
             order_status_tb
         values
             (0, #{statusName})
     </insert>
+
+    <insert id="saveOrder" parameterType="com.example.mandarin_shop_back.entity.order.Order" >
+        insert into order_tb
+        values (0, #{userId}, now(), #{orderTotalPrice}, #{shippingAddress}, #{orderStatusId}, now(), now())
+    </insert>
+
+    <select
+            id="findOrders"
+            resultMap="orderResultMap"
+    >
+        SELECT
+            ot.order_id,
+            ut.user_id,
+            ot.order_date,
+            ot.order_total_price,
+            ot.shipping_address,
+            ost.order_status_id
+        FROM
+            order_tb ot
+        JOIN
+            user_tb ut ON ot.user_id = ut.user_id
+        JOIN
+            order_status_tb ost ON ot.order_status_id = ost.order_status_id;
+    </select>
 </mapper>
