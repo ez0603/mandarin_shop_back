@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class OrderRespDto {
-    private int orderId;
     private int userId;
     private LocalDateTime orderDate;
     private int orderTotalPrice;
