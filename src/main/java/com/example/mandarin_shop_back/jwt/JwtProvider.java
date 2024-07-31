@@ -15,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
+import java.util.Collection;
 import java.util.Date;
 
 @Slf4j
@@ -41,6 +43,7 @@ public class JwtProvider {
     public String generateToken(Admin admin) { // JWT 생성
         int adminId = admin.getAdminId();
         String adminName = admin.getAdminName();
+        Collection<? extends GrantedAuthority> authorities = admin.getAuthorities();
         Date expireDate = new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 20));
 
         return Jwts.builder()
@@ -49,6 +52,7 @@ public class JwtProvider {
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
     }
 
     public String generateUserToken(User user) { // JWT 생성

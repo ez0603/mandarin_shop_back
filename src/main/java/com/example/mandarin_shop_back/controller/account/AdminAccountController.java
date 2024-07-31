@@ -4,6 +4,8 @@ package com.example.mandarin_shop_back.controller.account;
 import com.example.mandarin_shop_back.aop.annotation.ParamsPrintAspect;
 import com.example.mandarin_shop_back.aop.annotation.ValidAspect;
 import com.example.mandarin_shop_back.dto.account.request.EditPasswordReqDto;
+import com.example.mandarin_shop_back.entity.account.Admin;
+import com.example.mandarin_shop_back.entity.account.AdminRoleRegister;
 import com.example.mandarin_shop_back.security.PrincipalUser;
 import com.example.mandarin_shop_back.service.admin.AdminAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,6 @@ public class AdminAccountController {
     @ValidAspect
     @PutMapping("/password")
     public ResponseEntity<?> editPassword(@Valid @RequestBody EditPasswordReqDto editPasswordReqDto, BindingResult bindingResult) {
-
         adminAccountService.editPassword(editPasswordReqDto);
         return ResponseEntity.ok(true);
     }
@@ -43,4 +44,6 @@ public class AdminAccountController {
     public ResponseEntity<?> getAdminName(@RequestParam(value = "name") String name, @RequestParam(value = "email")String email) {
         return ResponseEntity.ok(adminAccountService.findAccountByNameAndEmail(name, email));
     }
+
+
 }

@@ -21,11 +21,10 @@ public class PermitAllFilter extends GenericFilter {
                 "/server",
                 "/error",
                 "/sales",
-                "/menu",
+                "/product",
                 "/user",
                 "/mail",
-                "/send",
-                "/pos"
+                "/send"
         );
 
         String uri = request.getRequestURI();
