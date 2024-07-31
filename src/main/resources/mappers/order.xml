@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mandarin_shop_back.repository.OrderMapper">
+    <resultMap id="OrderStatusResultMap" type="com.example.mandarin_shop_back.entity.order.OrderStatus">
+        <id property="orderStatusId" column="order_status_id" />
+        <result property="statusName" column="status_name" />
+    </resultMap>
+
+    <insert id="saveOrderStatus" parameterType="com.example.mandarin_shop_back.entity.order.OrderStatus" >
+        insert into
+            order_status_tb
+        values
+            (0, #{statusName})
+    </insert>
+</mapper>

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderStatus {
-    private int categoryId;
-    private String categoryName;
+    private int orderStatusId;
+    private String statusName;
 }

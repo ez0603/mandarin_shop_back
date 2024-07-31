@@ -20,7 +20,7 @@ public class PermitAllFilter extends GenericFilter {
                 "/admin",
                 "/server",
                 "/error",
-                "/sales",
+                "/order",
                 "/product",
                 "/user",
                 "/mail",
