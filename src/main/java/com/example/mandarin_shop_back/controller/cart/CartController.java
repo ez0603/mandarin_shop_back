@@ -1,5 +1,6 @@
 package com.example.mandarin_shop_back.controller.cart;
 
+import com.example.mandarin_shop_back.dto.cart.request.CartItemReqDto;
 import com.example.mandarin_shop_back.dto.cart.request.CartReqDto;
 import com.example.mandarin_shop_back.dto.product.request.AdminRegisterProductReqDto;
 import com.example.mandarin_shop_back.dto.product.request.UpdateProductReqDto;
@@ -16,18 +17,45 @@ public class CartController {
     private CartService cartService;
 
     @PostMapping("/carts")
-    public ResponseEntity<?> registerMenu(@RequestBody CartReqDto CartReqDto) {
+    public ResponseEntity<?> registerCart(@RequestBody CartReqDto CartReqDto) {
         return ResponseEntity.ok().body(cartService.saveCart((CartReqDto)));
     }
 
+    @GetMapping("/carts")
+    public ResponseEntity<?> getCart() {
+        return ResponseEntity.ok(cartService.getCart());
+    }
+
     @DeleteMapping("/carts")
-    public ResponseEntity<?> deleteProduct(@RequestParam int cartId) {
+    public ResponseEntity<?> deleteCart(@RequestParam int cartId) {
         return ResponseEntity.ok(cartService.deleteCart(cartId));
     }
 
     @PutMapping("/carts")
     public ResponseEntity<?> updateCart(@RequestBody CartReqDto CartReqDto) {
-        cartService.editProduct(CartReqDto);
+        cartService.editCart(CartReqDto);
         return ResponseEntity.ok(true);
     }
+
+    @PostMapping("/item")
+    public ResponseEntity<?> registerCartItem(@RequestBody CartItemReqDto cartItemReqDto) {
+        return ResponseEntity.ok().body(cartService.saveCartItem((cartItemReqDto)));
+    }
+
+    @GetMapping("/item")
+    public ResponseEntity<?> getCartItem() {
+        return ResponseEntity.ok(cartService.getCartItem());
+    }
+
+    @DeleteMapping("/item")
+    public ResponseEntity<?> deleteCartItem(@RequestParam int cartItemId) {
+        return ResponseEntity.ok(cartService.deleteCartItem(cartItemId));
+    }
+
+    @PutMapping("/item")
+    public ResponseEntity<?> updateCartItem(@RequestBody CartItemReqDto cartItemReqDto) {
+        cartService.editCartItem(cartItemReqDto);
+        return ResponseEntity.ok(true);
+    }
+
 }
