@@ -1,9 +1,13 @@
 package com.example.mandarin_shop_back.service.order;
 
 import com.example.mandarin_shop_back.dto.order.request.AddOrderStatusReqDto;
+import com.example.mandarin_shop_back.dto.order.request.OrderItemReqDto;
 import com.example.mandarin_shop_back.dto.order.request.OrderReqDto;
+import com.example.mandarin_shop_back.dto.order.response.OrderItemRespDto;
 import com.example.mandarin_shop_back.dto.order.response.OrderRespDto;
 import com.example.mandarin_shop_back.entity.order.Order;
+import com.example.mandarin_shop_back.entity.order.OrderItem;
+import com.example.mandarin_shop_back.exception.DeleteException;
 import com.example.mandarin_shop_back.exception.SaveException;
 import com.example.mandarin_shop_back.repository.OrderMapper;
 import com.example.mandarin_shop_back.service.user.UserService;
@@ -52,4 +56,51 @@ public class OrderService {
 
         return orderRespDtos;
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void insertOrderItem(OrderItemReqDto orderItemReqDto) {
+
+        OrderItem orderItem = orderItemReqDto.toEntity();
+        int successCount = orderMapper.saveOrderItem(orderItem);
+
+        if(successCount < 1) {
+            throw new SaveException();
+        }
+    }
+
+    public List<OrderItemRespDto> searchOrderItem () {
+        List<OrderItem> orderitems = orderMapper.findOrderItem();
+        List<OrderItemRespDto> orderItemRespDtos = new ArrayList<>();
+        for (OrderItem orderItem : orderitems) {
+            orderItemRespDtos.add(orderItem.toOrderItemRespDto());
+        }
+
+        return orderItemRespDtos;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void cancelOrder(int orderId) {
+        int successCount = 0;
+
+        // 주문 상태를 취소로 변경 (order_status_id = 2)
+        successCount += orderMapper.cancelOrder(orderId);
+
+        if (successCount < 1) {
+            throw new DeleteException(Map.of("cancelOrder 오류", "정상적으로 주문이 취소되지 않았습니다."));
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteOrderItem(int orderId) {
+        int successCount = 0;
+
+        // 주문 상태가 이미 취소된 주문의 항목만 삭제
+        successCount += orderMapper.deleteOrderItem(orderId);
+
+        if (successCount < 1) {
+            throw new DeleteException(Map.of("deleteOrderItem 오류", "정상적으로 주문 항목이 삭제되지 않았습니다."));
+        }
+    }
+
+
 }

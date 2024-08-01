@@ -20,6 +20,16 @@
         <result property="updateDate" column="update_date"/>
     </resultMap>
 
+    <resultMap id="orderItemResultMap" type="com.example.mandarin_shop_back.entity.order.OrderItem">
+        <id property="orderItemId" column="order_item_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="count" column="count"/>
+        <result property="price" column="price"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
     <insert id="saveOrderStatus" parameterType="com.example.mandarin_shop_back.entity.order.OrderStatus" >
         insert into
             order_status_tb
@@ -50,4 +60,46 @@
         JOIN
             order_status_tb ost ON ot.order_status_id = ost.order_status_id;
     </select>
+
+    <insert id="saveOrderItem" parameterType="com.example.mandarin_shop_back.entity.order.OrderItem" >
+        insert into order_item_tb
+        values (0, #{orderId}, #{productId}, #{count}, #{price}, now(), now())
+    </insert>
+
+    <select
+            id="findOrderItem"
+            resultMap="orderItemResultMap"
+    >
+        SELECT
+            oit.order_item_id,
+            ot.order_id,
+            pt.product_id,
+            oit.count,
+            oit.price
+        FROM
+            order_item_tb oit
+        JOIN
+            order_tb ot ON ot.order_id = oit.order_id
+        JOIN
+            product_tb pt ON pt.product_id = oit.product_id
+    </select>
+
+    <update id="cancelOrder">
+        UPDATE
+            order_tb
+        SET
+            order_status_id = 2
+        WHERE
+            order_id = #{orderId}
+    </update>
+
+    <delete id="deleteOrderItem">
+        DELETE FROM order_item_tb
+        WHERE order_id IN (
+        SELECT order_id
+        FROM order_tb
+        WHERE order_status_id = 2
+        );
+
+    </delete>
 </mapper>
