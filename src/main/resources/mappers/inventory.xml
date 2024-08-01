@@ -30,9 +30,22 @@
             it.update_date
         FROM
             inventory_tb it
-        LEFT OUTER JOIN
+        INNER JOIN
             product_tb pt
             ON
             pt.product_id = it.product_id
     </select>
+
+    <update id="updateInventory">
+        UPDATE
+            inventory_tb
+        SET
+            product_id = #{productId},
+            inventory_quantity = #{inventoryQuantity},
+            change_quantity = #{changeQuantity},
+            inventory_location = #{inventoryLocation},
+            update_date = now()
+        WHERE
+            inventory_id = #{inventoryId}
+    </update>
 </mapper>

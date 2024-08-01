@@ -16,6 +16,7 @@ public class InventoryReqDto {
 
     public Inventory toEntity() {
         return Inventory.builder()
+                .inventoryId(inventoryId)
                 .productId(productId)
                 .inventoryQuantity(inventoryQuantity)
                 .changeQuantity(changeQuantity)

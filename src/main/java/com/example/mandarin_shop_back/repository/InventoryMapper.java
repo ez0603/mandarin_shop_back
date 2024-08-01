@@ -11,4 +11,6 @@ public interface InventoryMapper {
     public int saveInventory(Inventory inventory);
 
     public List<Inventory> getInventory();
+
+    public int updateInventory(Inventory inventory);
 }

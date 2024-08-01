@@ -41,4 +41,9 @@ public class InventoryService {
 
         return inventories.stream().map(Inventory::toSearchInventoryRespDto).collect(Collectors.toList());
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public int updateInventory(InventoryReqDto inventoryReqDto) {
+        return inventoryMapper.updateInventory(inventoryReqDto.toEntity());
+    }
 }

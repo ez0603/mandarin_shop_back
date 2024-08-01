@@ -22,4 +22,9 @@ public class InventoryController {
     public ResponseEntity<?> getInventory() {
         return ResponseEntity.ok(inventoryService.getInventory());
     }
+
+    @PutMapping("/item")
+    public ResponseEntity<?> updateInventory(@RequestBody InventoryReqDto inventoryReqDto) {
+        return ResponseEntity.ok(inventoryService.updateInventory(inventoryReqDto));
+    }
 }
