@@ -3,7 +3,9 @@ package com.example.mandarin_shop_back.service.admin;
 import com.example.mandarin_shop_back.dto.product.request.*;
 import com.example.mandarin_shop_back.dto.product.response.AdminSearchProductRespDto;
 import com.example.mandarin_shop_back.dto.product.response.OptionTitlesRespDto;
+import com.example.mandarin_shop_back.dto.product.response.OptionsRespDto;
 import com.example.mandarin_shop_back.entity.product.Category;
+import com.example.mandarin_shop_back.entity.product.OptionName;
 import com.example.mandarin_shop_back.entity.product.OptionTitle;
 import com.example.mandarin_shop_back.entity.product.Product;
 import com.example.mandarin_shop_back.repository.ProductMapper;
@@ -12,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,4 +99,36 @@ public class AdminProductService {
         productMapper.deleteOptionTitle(deleteOptionTitleReqDto.toEntity());
     }
 
+    public void insertOptionName(AddOptionNameReqDto addOptionNameReqDto) {
+        productMapper.saveOptionName(addOptionNameReqDto.toEntity());
+    }
+
+    // 메뉴 별 옵션 조회
+    @Transactional(rollbackFor = Exception.class)
+    public List<OptionsRespDto> getOptionsByMenuId(int productId) {
+        List<OptionName> options = productMapper.getOptionsByMenuId(productId);
+        Map<Integer, OptionsRespDto> optionsMap = new HashMap<>();
+
+        for (OptionName optionName : options) {
+            int optionTitleId = optionName.getOptionTitle().getOptionTitleId();
+            OptionsRespDto optionsRespDto = optionsMap.get(optionTitleId);
+            if (optionsRespDto == null) {
+                optionsRespDto = OptionsRespDto.builder()
+                        .productId(optionName.getProductId())
+                        .optionTitleId(optionTitleId)
+                        .titleName(optionName.getOptionTitle().getTitleName())
+                        .optionNameIds(new ArrayList<>())
+                        .optionNames(new ArrayList<>())
+                        .build();
+                optionsMap.put(optionTitleId, optionsRespDto);
+            }
+            optionsRespDto.getOptionNameIds().add(optionName.getOptionNameId());
+            optionsRespDto.getOptionNames().add(optionName.getOptionName());
+        }
+        return new ArrayList<>(optionsMap.values());
+    }
+
+    public void editOptionName(UpdateOptionNameReqDto updateOptionNameReqDto) {
+        productMapper.updateOptionName(updateOptionNameReqDto.toEntity());
+    }
 }

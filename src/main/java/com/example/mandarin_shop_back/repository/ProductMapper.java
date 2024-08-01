@@ -1,6 +1,7 @@
 package com.example.mandarin_shop_back.repository;
 
 import com.example.mandarin_shop_back.entity.product.Category;
+import com.example.mandarin_shop_back.entity.product.OptionName;
 import com.example.mandarin_shop_back.entity.product.OptionTitle;
 import com.example.mandarin_shop_back.entity.product.Product;
 import org.apache.ibatis.annotations.Mapper;
@@ -33,4 +34,10 @@ public interface ProductMapper {
     int updateOptionTitle(OptionTitle optionTitle);
 
     int deleteOptionTitle(OptionTitle optionTitle);
+
+    int saveOptionName(OptionName optionName);
+
+    List<OptionName> getOptionsByMenuId(@Param("productId") int productId);
+
+    int updateOptionName(OptionName optionName);
 }

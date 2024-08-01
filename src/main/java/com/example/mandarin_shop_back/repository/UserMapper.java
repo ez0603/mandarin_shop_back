@@ -1,9 +1,11 @@
 package com.example.mandarin_shop_back.repository;
 
-import com.example.mandarin_shop_back.entity.account.Admin;
+import com.example.mandarin_shop_back.entity.product.OptionName;
 import com.example.mandarin_shop_back.entity.user.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface UserMapper {

@@ -80,4 +80,21 @@ public class ProductController {
         return ResponseEntity.ok(true);
     }
 
+    @PostMapping("/option/name")
+    public ResponseEntity<?> addOptionName(@RequestBody AddOptionNameReqDto addOptionNameReqDto) {
+        adminProductService.insertOptionName(addOptionNameReqDto);
+        return ResponseEntity.created(null).body(true);
+    }
+
+    @GetMapping("/option")
+    public ResponseEntity<?> getOptionsByAdminId(@RequestParam int productId) {
+        return ResponseEntity.ok(adminProductService.getOptionsByMenuId(productId));
+    }
+
+    @PutMapping("/option")
+    public ResponseEntity<?> updateOptionName(@RequestBody UpdateOptionNameReqDto updateOptionNameReqDto) {
+        adminProductService.editOptionName(updateOptionNameReqDto);
+        return ResponseEntity.ok(true);
+    }
+
 }

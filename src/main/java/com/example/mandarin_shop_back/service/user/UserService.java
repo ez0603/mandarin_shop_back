@@ -1,9 +1,14 @@
 package com.example.mandarin_shop_back.service.user;
 
+import com.example.mandarin_shop_back.dto.product.response.OptionsRespDto;
+import com.example.mandarin_shop_back.entity.product.OptionName;
 import com.example.mandarin_shop_back.entity.user.User;
 import com.example.mandarin_shop_back.repository.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
