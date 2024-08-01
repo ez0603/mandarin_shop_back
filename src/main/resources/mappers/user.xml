@@ -10,7 +10,9 @@
         <result property="customerName" column="customer_name" />
         <result property="username" column="username" />
         <result property="password" column="password" />
+        <result property="phone" column="phone" />
         <result property="email" column="email" />
+        <result property="address" column="address" />
         <result property="createDate" column="create_date" />
         <result property="updateDate" column="update_date" />
     </resultMap>
@@ -18,11 +20,11 @@
     <insert id="saveUser"
             parameterType="com.example.mandarin_shop_back.entity.user.User"
             keyProperty="userId"
-            useGeneratedKeys="true"
-    >
+            useGeneratedKeys="true">
         insert into user_tb
-        values(0, 2, #{customerName}, #{username}, #{password}, #{email}, now(), now())
+        values (0, 2, #{customerName}, #{username}, #{password}, #{phone}, #{email}, #{address}, now(), now())
     </insert>
+
 
     <select id="findUserByUsername"
             parameterType="string"

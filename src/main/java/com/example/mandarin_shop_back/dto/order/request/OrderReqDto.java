@@ -17,7 +17,7 @@ public class OrderReqDto {
     public Order toEntity() {
         return Order.builder()
                 .userId(userId)
-                .userId(cartId)
+                .cartId(cartId)
                 .orderDate(orderDate)
                 .orderTotalPrice(orderTotalPrice)
                 .shippingAddress(shippingAddress)

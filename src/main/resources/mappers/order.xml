@@ -40,7 +40,17 @@
 
     <insert id="saveOrder" parameterType="com.example.mandarin_shop_back.entity.order.Order" >
         insert into order_tb
-        values (0, #{userId}, #{cartId}, now(), #{orderTotalPrice}, #{shippingAddress}, #{orderStatusId}, now(), now())
+        values (
+            0,
+            #{userId},
+            #{cartId},
+            now(),
+            #{orderTotalPrice},
+            #{shippingAddress},
+            #{orderStatusId},
+            now(),
+            now()
+        )
     </insert>
 
     <select

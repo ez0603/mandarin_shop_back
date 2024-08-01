@@ -46,7 +46,6 @@ public class OrderService {
             throw new SaveException();
         }
     }
-
     public List<OrderRespDto> searchOrders () {
         List<Order> orders = orderMapper.findOrders();
         List<OrderRespDto> orderRespDtos = new ArrayList<>();
