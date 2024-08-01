@@ -69,6 +69,8 @@ public class OrderService {
 
     public List<OrderItemRespDto> searchOrderItem () {
         List<OrderItem> orderitems = orderMapper.findOrderItem();
+        System.out.println("Order items: " + orderitems); // 로그 추가
+
         List<OrderItemRespDto> orderItemRespDtos = new ArrayList<>();
         for (OrderItem orderItem : orderitems) {
             orderItemRespDtos.add(orderItem.toOrderItemRespDto());
