@@ -1,5 +1,7 @@
 package com.example.mandarin_shop_back.entity.inventory;
 
+import com.example.mandarin_shop_back.dto.inventory.response.InventoryRespDto;
+import com.example.mandarin_shop_back.dto.product.response.AdminSearchProductRespDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,4 +21,17 @@ public class Inventory {
     private String inventoryLocation;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
+
+    public InventoryRespDto toSearchInventoryRespDto() {
+        return InventoryRespDto.builder()
+                .inventoryId(inventoryId)
+                .productId(productId)
+                .inventoryQuantity(inventoryQuantity)
+                .changeQuantity(changeQuantity)
+                .inventoryLocation(inventoryLocation)
+                .createDate(createDate)
+                .updateDate(updateDate)
+                .build();
+    }
 }
+

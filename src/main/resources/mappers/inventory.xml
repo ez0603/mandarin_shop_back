@@ -18,4 +18,21 @@
         insert into inventory_tb
         values (0, #{productId}, #{inventoryQuantity}, #{changeQuantity}, #{inventoryLocation}, now(), now())
     </insert>
+
+    <select id="getInventory" resultMap="inventoryResultMap">
+        SELECT
+            it.inventory_id,
+            pt.product_id,
+            it.inventory_quantity,
+            it.change_quantity,
+            it.inventory_location,
+            it.create_date,
+            it.update_date
+        FROM
+            inventory_tb it
+        LEFT OUTER JOIN
+            product_tb pt
+            ON
+            pt.product_id = it.product_id
+    </select>
 </mapper>
