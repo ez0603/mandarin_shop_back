@@ -12,6 +12,7 @@
     <resultMap id="orderResultMap" type="com.example.mandarin_shop_back.entity.order.Order">
         <id property="orderId" column="order_id"/>
         <result property="userId" column="user_id"/>
+        <result property="cartId" column="cart_id"/>
         <result property="orderDate" column="order_date"/>
         <result property="orderTotalPrice" column="order_total_price"/>
         <result property="shippingAddress" column="shipping_address"/>
@@ -39,7 +40,7 @@
 
     <insert id="saveOrder" parameterType="com.example.mandarin_shop_back.entity.order.Order" >
         insert into order_tb
-        values (0, #{userId}, now(), #{orderTotalPrice}, #{shippingAddress}, #{orderStatusId}, now(), now())
+        values (0, #{userId}, #{cartId}, now(), #{orderTotalPrice}, #{shippingAddress}, #{orderStatusId}, now(), now())
     </insert>
 
     <select
@@ -49,6 +50,7 @@
         SELECT
             ot.order_id,
             ut.user_id,
+            ct.cart_id,
             ot.order_date,
             ot.order_total_price,
             ot.shipping_address,
@@ -57,6 +59,8 @@
             order_tb ot
         JOIN
             user_tb ut ON ot.user_id = ut.user_id
+        JOIN
+            cart_tb ut ON ct.cart_id = ot.cart_id
         JOIN
             order_status_tb ost ON ot.order_status_id = ost.order_status_id;
     </select>

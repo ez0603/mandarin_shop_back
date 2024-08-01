@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class OrderRespDto {
     private int userId;
+    private int cartId;
     private LocalDateTime orderDate;
     private int orderTotalPrice;
     private String shippingAddress;

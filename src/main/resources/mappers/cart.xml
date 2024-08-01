@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mandarin_shop_back.repository.CartMapper">
+    <resultMap id="cartResultMap" type="com.example.mandarin_shop_back.entity.cart.Cart">
+        <id property="cartId" column="cart_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="totalPrice" column="total_price"/>
+        <result property="createDate" column="create_date" />
+        <result property="updateDate" column="update_date" />
+    </resultMap>
+
+    <insert id="saveCart" parameterType="com.example.mandarin_shop_back.entity.cart.Cart">
+        insert into cart_tb
+        values(
+        0,
+        #{userId},
+        #{totalPrice},
+        now(),
+        now()
+        )
+    </insert>
+
+    <delete id="deleteCart" parameterType="int">
+        DELETE FROM
+            cart_tb
+        WHERE
+            cart_id = #{cartId};
+    </delete>
+
+    <update id="updateCart">
+        update
+            cart_tb
+        set
+            user_id = #{userId},
+            total_price = #{totalPrice},
+            update_date = now()
+        where
+            cart_id = #{cartId}
+    </update>
+</mapper>

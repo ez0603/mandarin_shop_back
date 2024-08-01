@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class Order {
     private int orderId;
     private int userId;
+    private int cartId;
     private LocalDateTime orderDate;
     private int orderTotalPrice;
     private String shippingAddress;
@@ -25,6 +26,7 @@ public class Order {
     public OrderRespDto toOrderRespDto () {
         return OrderRespDto.builder()
                 .userId(userId)
+                .cartId(cartId)
                 .orderDate(orderDate)
                 .orderTotalPrice(orderTotalPrice)
                 .shippingAddress(shippingAddress)
