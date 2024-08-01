@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mandarin_shop_back.repository.ProductMapper">
+    <resultMap id="OptionTitleResultMap" type="com.example.mandarin_shop_back.entity.product.OptionTitle">
+        <id property="optionTitleId" column="option_title_id" />
+        <result property="productId" column="product_id" />
+        <result property="titleName" column="title_name" />
+        <result property="createDate" column="create_date" />
+        <result property="updateDate" column="update_date" />
+    </resultMap>
+
+    <insert id="saveOptionTitle" parameterType="com.example.mandarin_shop_back.entity.product.OptionTitle">
+        insert into
+            option_title_tb
+        values
+        (0, #{productId}, #{titleName}, now(), now())
+    </insert>
+
+    <select id="getOptionTitleByproductId" resultMap="OptionTitleResultMap">
+        select
+            *
+        from
+            option_title_tb
+        where
+            product_id = #{productId}
+    </select>
+
+    <update id="updateOptionTitle">
+        update
+            option_title_tb
+        set
+            product_id = #{productId},
+            title_name = #{titleName},
+            update_date = now()
+        where
+            option_title_id = #{optionTitleId}
+    </update>
+
+    <delete id="deleteOptionTitle">
+        delete
+            from option_title_tb
+        where
+            option_title_id = #{optionTitleId}
+    </delete>
+</mapper>

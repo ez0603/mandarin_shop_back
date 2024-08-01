@@ -1,9 +1,6 @@
 package com.example.mandarin_shop_back.controller.product;
 
-import com.example.mandarin_shop_back.dto.product.request.AdminRegisterProductReqDto;
-import com.example.mandarin_shop_back.dto.product.request.UpdateProductCategoryReqDto;
-import com.example.mandarin_shop_back.dto.product.request.UpdateProductReqDto;
-import com.example.mandarin_shop_back.dto.product.request.AddProductCategoryReqDto;
+import com.example.mandarin_shop_back.dto.product.request.*;
 import com.example.mandarin_shop_back.service.admin.AdminProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +54,30 @@ public class ProductController {
     @GetMapping("/category")
     public ResponseEntity<?> getCategory() {
         return ResponseEntity.ok().body(adminProductService.getCategory());
+    }
+
+    @PostMapping("/option/title")
+    public ResponseEntity<?> addOptionTitle(@RequestBody AddOptionTitleReqDto addOptionTitleReqDto) {
+        adminProductService.insertOptionTitle(addOptionTitleReqDto);
+        return ResponseEntity.created(null).body(true);
+    }
+
+    @GetMapping("/option/title")
+    public ResponseEntity<?> getOptionTitles(@RequestParam int productId) {
+        adminProductService.getOptionTitles(productId);
+        return ResponseEntity.ok(adminProductService.getOptionTitles(productId));
+    }
+
+    @PutMapping("/option/title")
+    public ResponseEntity<?> updateOptionTitle(@RequestBody UpdateOptionTitleReqDto updateOptionTitleReqDto) {
+        adminProductService.editOptionTitle(updateOptionTitleReqDto);
+        return ResponseEntity.ok(true);
+    }
+
+    @DeleteMapping("/option/title")
+    public ResponseEntity<?> deleteOptionTitle(@RequestBody DeleteOptionTitleReqDto deleteOptionTitleReqDto) {
+        adminProductService.deleteOptionTitle(deleteOptionTitleReqDto);
+        return ResponseEntity.ok(true);
     }
 
 }

@@ -1,17 +1,17 @@
 package com.example.mandarin_shop_back.service.admin;
 
-import com.example.mandarin_shop_back.dto.product.request.AdminRegisterProductReqDto;
-import com.example.mandarin_shop_back.dto.product.request.UpdateProductCategoryReqDto;
-import com.example.mandarin_shop_back.dto.product.request.UpdateProductReqDto;
-import com.example.mandarin_shop_back.dto.product.request.AddProductCategoryReqDto;
+import com.example.mandarin_shop_back.dto.product.request.*;
 import com.example.mandarin_shop_back.dto.product.response.AdminSearchProductRespDto;
+import com.example.mandarin_shop_back.dto.product.response.OptionTitlesRespDto;
 import com.example.mandarin_shop_back.entity.product.Category;
+import com.example.mandarin_shop_back.entity.product.OptionTitle;
 import com.example.mandarin_shop_back.entity.product.Product;
 import com.example.mandarin_shop_back.repository.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,4 +59,40 @@ public class AdminProductService {
     public List<Category> getCategory() {
         return productMapper.getCategory();
     }
+
+    public void insertOptionTitle(AddOptionTitleReqDto addOptionTitleReqDto) {
+        productMapper.saveOptionTitle(addOptionTitleReqDto.toEntity());
+    }
+
+    // 제품 옵션 타이틀 조회
+    @Transactional(rollbackFor = Exception.class)
+    public OptionTitlesRespDto getOptionTitles(int productId) {
+        List<OptionTitle> optionTitles = productMapper.getOptionTitleByproductId(productId);
+        OptionTitlesRespDto optionTitlesRespDto = new OptionTitlesRespDto();
+
+        List<Integer> optionTitleIds = new ArrayList<>();
+        List<String> optionTitleNames = new ArrayList<>();
+
+        for (OptionTitle optionTitle : optionTitles) {
+            optionTitleIds.add(optionTitle.getOptionTitleId());
+            optionTitleNames.add(optionTitle.getTitleName());
+        }
+
+        optionTitlesRespDto.setOptionTitlesId(optionTitleIds);
+        optionTitlesRespDto.setOptionTitleNames(optionTitleNames);
+
+        return optionTitlesRespDto;
+    }
+
+    // 옵션 타이틀 수정
+    public void editOptionTitle(UpdateOptionTitleReqDto updateOptionTitleReqDto) {
+        productMapper.updateOptionTitle(updateOptionTitleReqDto.toEntity());
+    }
+
+    // 옵션 타이틀 삭제
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteOptionTitle(DeleteOptionTitleReqDto deleteOptionTitleReqDto) {
+        productMapper.deleteOptionTitle(deleteOptionTitleReqDto.toEntity());
+    }
+
 }
