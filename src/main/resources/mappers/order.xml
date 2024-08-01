@@ -114,7 +114,7 @@
         SELECT order_id
         FROM order_tb
         WHERE order_status_id = 2
-        );
+        )
 
     </delete>
 </mapper>
