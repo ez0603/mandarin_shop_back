@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -115,27 +112,27 @@ public class AdminProductService {
 
     // 제품 별 옵션 조회
     @Transactional(rollbackFor = Exception.class)
-    public List<OptionsRespDto> getOptionsByMenuId(int productId) {
+    public OptionsRespDto getOptionsByMenuId(int productId) {
         List<OptionName> options = productMapper.getOptionsByMenuId(productId);
-        Map<Integer, OptionsRespDto> optionsMap = new HashMap<>();
+        Set<Integer> optionTitlesIdSet = new HashSet<>();
+        Set<String> optionTitleNamesSet = new HashSet<>();
+        List<Integer> optionNameIds = new ArrayList<>();
+        List<String> optionNames = new ArrayList<>();
 
         for (OptionName optionName : options) {
-            int optionTitleId = optionName.getOptionTitle().getOptionTitleId();
-            OptionsRespDto optionsRespDto = optionsMap.get(optionTitleId);
-            if (optionsRespDto == null) {
-                optionsRespDto = OptionsRespDto.builder()
-                        .productId(optionName.getProductId())
-                        .optionTitleId(optionTitleId)
-                        .titleName(optionName.getOptionTitle().getTitleName())
-                        .optionNameIds(new ArrayList<>())
-                        .optionNames(new ArrayList<>())
-                        .build();
-                optionsMap.put(optionTitleId, optionsRespDto);
-            }
-            optionsRespDto.getOptionNameIds().add(optionName.getOptionNameId());
-            optionsRespDto.getOptionNames().add(optionName.getOptionName());
+            optionTitlesIdSet.add(optionName.getOptionTitle().getOptionTitleId());
+            optionTitleNamesSet.add(optionName.getOptionTitle().getTitleName());
+            optionNameIds.add(optionName.getOptionNameId());
+            optionNames.add(optionName.getOptionName());
         }
-        return new ArrayList<>(optionsMap.values());
+
+        return OptionsRespDto.builder()
+                .productId(productId)
+                .optionTitlesId(new ArrayList<>(optionTitlesIdSet))
+                .optionTitleNames(new ArrayList<>(optionTitleNamesSet))
+                .optionNameIds(optionNameIds)
+                .optionNames(optionNames)
+                .build();
     }
 
     public void editOptionName(UpdateOptionNameReqDto updateOptionNameReqDto) {

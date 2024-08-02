@@ -13,8 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public class OptionsRespDto {
     private int productId;
-    private int optionTitleId;
-    private String titleName;
+    private List<Integer> optionTitlesId;
+    private List<String> optionTitleNames;
 
     private List<Integer> optionNameIds;
     private List<String> optionNames;

@@ -25,6 +25,8 @@ public class Cart {
                 .cartId(cartId)
                 .userId(userId)
                 .totalPrice(totalPrice)
+                .createDate(createDate)
+                .updateDate(updateDate)
                 .build();
     }
 }
