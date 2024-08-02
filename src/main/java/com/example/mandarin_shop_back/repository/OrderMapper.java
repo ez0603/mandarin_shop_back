@@ -16,6 +16,8 @@ public interface OrderMapper {
 
     public List<Order> findOrders();
 
+    public List<Order> findOrdersByUserId(@Param("userId") int userId);
+
     public int saveOrderItem(OrderItem orderItem);
 
     public List<OrderItem> findOrderItem();

@@ -46,13 +46,29 @@ public class OrderService {
             throw new SaveException();
         }
     }
-    public List<OrderRespDto> searchOrders () {
+
+    @Transactional(readOnly = true)
+    public List<OrderRespDto> searchOrders() {
         List<Order> orders = orderMapper.findOrders();
+        System.out.println("Number of orders: " + orders.size()); // 디버깅을 위해 추가
+
         List<OrderRespDto> orderRespDtos = new ArrayList<>();
         for (Order order : orders) {
             orderRespDtos.add(order.toOrderRespDto());
         }
 
+        return orderRespDtos;
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderRespDto> searchOrdersByUserId(int userId) {
+        List<Order> orders = orderMapper.findOrdersByUserId(userId);
+        System.out.println("Number of orders: " + orders.size()); // 디버깅을 위해 추가
+
+        List<OrderRespDto> orderRespDtos = new ArrayList<>();
+        for (Order order : orders) {
+            orderRespDtos.add(order.toOrderRespDto());
+        }
         return orderRespDtos;
     }
 

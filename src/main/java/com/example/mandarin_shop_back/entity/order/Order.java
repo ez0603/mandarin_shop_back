@@ -25,12 +25,14 @@ public class Order {
 
     public OrderRespDto toOrderRespDto () {
         return OrderRespDto.builder()
+                .orderId(orderId)
                 .userId(userId)
                 .cartId(cartId)
                 .orderDate(orderDate)
                 .orderTotalPrice(orderTotalPrice)
                 .shippingAddress(shippingAddress)
                 .orderStatusId(orderStatusId)
+                .createDate(createDate)
                 .build();
     }
 }

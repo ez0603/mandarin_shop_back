@@ -9,7 +9,7 @@
         <result property="statusName" column="status_name" />
     </resultMap>
 
-    <resultMap id="orderResultMap" type="com.example.mandarin_shop_back.entity.order.Order">
+    <resultMap id="OrderResultMap" type="com.example.mandarin_shop_back.entity.order.Order">
         <id property="orderId" column="order_id"/>
         <result property="userId" column="user_id"/>
         <result property="cartId" column="cart_id"/>
@@ -21,7 +21,7 @@
         <result property="updateDate" column="update_date"/>
     </resultMap>
 
-    <resultMap id="orderItemResultMap" type="com.example.mandarin_shop_back.entity.order.OrderItem">
+    <resultMap id="OrderItemResultMap" type="com.example.mandarin_shop_back.entity.order.OrderItem">
         <id property="orderItemId" column="order_item_id"/>
         <result property="orderId" column="order_id"/>
         <result property="productId" column="product_id"/>
@@ -53,27 +53,46 @@
         )
     </insert>
 
-    <select
-            id="findOrders"
-            resultMap="orderResultMap"
-    >
+    <select id="findOrders" resultMap="OrderResultMap">
         SELECT
-        ot.order_id,
-        ut.user_id,
-        ct.cart_id,
-        ot.order_date,
-        ot.order_total_price,
-        ot.shipping_address,
-        ost.order_status_id
+            ot.order_id,
+            ut.user_id,
+            ct.cart_id,
+            ot.order_date,
+            ot.order_total_price,
+            ot.shipping_address,
+            ot.order_status_id,
+            ot.create_date
         FROM
-        order_tb ot
+            order_tb ot
         JOIN
-        user_tb ut ON ot.user_id = ut.user_id
+            user_tb ut ON ot.user_id = ut.user_id
         JOIN
-        cart_tb ct ON ct.cart_id = ot.cart_id
+            cart_tb ct ON ot.cart_id = ct.cart_id
         JOIN
-        order_status_tb ost ON ot.order_status_id = ost.order_status_id;
+            order_status_tb ost ON ot.order_status_id = ost.order_status_id
+    </select>
 
+    <select id="findOrdersByUserId" resultMap="OrderResultMap">
+        SELECT
+            ot.order_id,
+            ot.user_id,
+            ot.cart_id,
+            ot.order_date,
+            ot.order_total_price,
+            ot.shipping_address,
+            ot.order_status_id,
+            ot.create_date
+        FROM
+            order_tb ot
+        JOIN
+            user_tb ut ON ot.user_id = ut.user_id
+        JOIN
+            cart_tb ct ON ot.cart_id = ct.cart_id
+        JOIN
+            order_status_tb ost ON ot.order_status_id = ost.order_status_id
+        WHERE
+            ot.user_id = #{userId}
     </select>
 
     <insert id="saveOrderItem" parameterType="com.example.mandarin_shop_back.entity.order.OrderItem" >
@@ -83,7 +102,7 @@
 
     <select
             id="findOrderItem"
-            resultMap="orderItemResultMap"
+            resultMap="OrderItemResultMap"
     >
         SELECT
         oit.order_item_id,

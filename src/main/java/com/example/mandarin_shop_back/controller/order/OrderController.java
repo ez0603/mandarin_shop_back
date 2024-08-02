@@ -4,6 +4,7 @@ import com.example.mandarin_shop_back.aop.annotation.ParamsPrintAspect;
 import com.example.mandarin_shop_back.dto.order.request.AddOrderStatusReqDto;
 import com.example.mandarin_shop_back.dto.order.request.OrderItemReqDto;
 import com.example.mandarin_shop_back.dto.order.request.OrderReqDto;
+import com.example.mandarin_shop_back.dto.order.response.OrderRespDto;
 import com.example.mandarin_shop_back.service.order.OrderService;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,11 @@ public class OrderController {
     @GetMapping("/orders")
     public ResponseEntity<?> getOrder() {
         return ResponseEntity.ok(orderService.searchOrders());
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<OrderRespDto>> searchOrdersByUserId(@RequestParam int userId) {
+        return ResponseEntity.ok(orderService.searchOrdersByUserId(userId));
     }
 
     @PutMapping("/orders")
