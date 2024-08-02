@@ -1,6 +1,6 @@
 package com.example.mandarin_shop_back.entity.product;
 
-import com.example.mandarin_shop_back.dto.product.response.OptionsRespDto;
+//import com.example.mandarin_shop_back.dto.user.response.OptionsRespDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,12 +23,13 @@ public class OptionName {
     private OptionTitle optionTitle;
     private Product product;
 
-    public OptionsRespDto toOptionRespDto() {
-        return OptionsRespDto.builder()
-                .optionTitleId(optionTitleId)
-                .productId(productId)
-                .optionName(optionName)
-                .optionTitleId(optionTitle.getOptionTitleId())
-                .build();
-    }
+//    public OptionsRespDto toOptionRespDto() {
+//        return OptionsRespDto.builder()
+//                .optionTitleId(optionTitleId)
+//                .productId(productId)
+//                .optionName(optionName)
+//                .optionTitleId(optionTitle.getOptionTitleId())
+//                .optionTitleName(optionTitle.getTitleName())
+//                .build();
+//    }
 }

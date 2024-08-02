@@ -103,7 +103,7 @@ public class AdminProductService {
         productMapper.saveOptionName(addOptionNameReqDto.toEntity());
     }
 
-    // 메뉴 별 옵션 조회
+    // 제품 별 옵션 조회
     @Transactional(rollbackFor = Exception.class)
     public List<OptionsRespDto> getOptionsByMenuId(int productId) {
         List<OptionName> options = productMapper.getOptionsByMenuId(productId);
