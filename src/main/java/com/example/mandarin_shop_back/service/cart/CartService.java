@@ -24,8 +24,8 @@ public class CartService {
         return cartMapper.saveCart(cartReqDto.toEntity());
     }
 
-    public List<CartRespDto> getCart() {
-        List<Cart> carts = cartMapper.getCart();
+    public List<CartRespDto> getCart(int userId) {
+        List<Cart> carts = cartMapper.getCart(userId);
 
         return carts.stream().map(Cart::toSearchCartRespDto).collect(Collectors.toList());
     }
@@ -46,8 +46,8 @@ public class CartService {
         return cartMapper.saveCartItem(cartItemReqDto.toEntity());
     }
 
-    public List<CartItemRespDto> getCartItem() {
-        List<CartItem> cartItems = cartMapper.getCartItem();
+    public List<CartItemRespDto> getCartItem(int cartId) {
+        List<CartItem> cartItems = cartMapper.getCartItem(cartId);
 
         return cartItems.stream().map(CartItem::toSearchCartItemRespDto).collect(Collectors.toList());
     }

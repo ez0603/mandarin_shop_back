@@ -3,6 +3,7 @@ package com.example.mandarin_shop_back.repository;
 import com.example.mandarin_shop_back.entity.cart.Cart;
 import com.example.mandarin_shop_back.entity.cart.CartItem;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
 public interface CartMapper {
     public int saveCart(Cart cart);
 
-    public List<Cart> getCart();
+    public List<Cart> getCart(@Param("userId") int userId);
 
     public int deleteCart(int cartId);
 
@@ -18,7 +19,7 @@ public interface CartMapper {
 
     public int saveCartItem(CartItem cartItem);
 
-    public List<CartItem> getCartItem();
+    public List<CartItem> getCartItem(@Param("cartId") int cartId);
 
     public int deleteCartItem(int cartItemId);
 

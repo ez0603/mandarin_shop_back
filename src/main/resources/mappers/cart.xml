@@ -46,6 +46,8 @@
             user_tb ut
         ON
             ut.user_id = cat.user_id
+        WHERE
+            cat.user_id = #{userId}
     </select>
 
     <delete id="deleteCart" parameterType="int">
@@ -91,9 +93,11 @@
         FROM
             cart_item_tb cit
         LEFT OUTER JOIN
-        cart_tb cat ON cat.cart_id = cit.cart_id
+            cart_tb cat ON cat.cart_id = cit.cart_id
         LEFT OUTER JOIN
             product_tb pt ON pt.product_id = cit.product_id
+        WHERE
+            cit.cart_id = #{cartId};
     </select>
 
     <delete id="deleteCartItem" parameterType="int">

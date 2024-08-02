@@ -22,8 +22,8 @@ public class CartController {
     }
 
     @GetMapping("/carts")
-    public ResponseEntity<?> getCart() {
-        return ResponseEntity.ok(cartService.getCart());
+    public ResponseEntity<?> getCart(@RequestParam int userId) {
+        return ResponseEntity.ok(cartService.getCart(userId));
     }
 
     @DeleteMapping("/carts")
@@ -43,8 +43,8 @@ public class CartController {
     }
 
     @GetMapping("/item")
-    public ResponseEntity<?> getCartItem() {
-        return ResponseEntity.ok(cartService.getCartItem());
+    public ResponseEntity<?> getCartItem(@RequestParam int cartId) {
+        return ResponseEntity.ok(cartService.getCartItem(cartId));
     }
 
     @DeleteMapping("/item")
