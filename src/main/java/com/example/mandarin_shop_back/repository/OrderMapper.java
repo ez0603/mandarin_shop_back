@@ -22,6 +22,8 @@ public interface OrderMapper {
 
     public List<OrderItem> findOrderItem();
 
+    public List<OrderItem> findOrderItemByUserId(@Param("userId") int userId);
+
     public int cancelOrder(@Param("orderId") int orderId);
 
     public int deleteOrderItem(@Param("orderId") int orderId);

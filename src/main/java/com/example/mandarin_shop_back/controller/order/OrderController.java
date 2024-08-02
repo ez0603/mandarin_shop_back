@@ -66,5 +66,10 @@ public class OrderController {
         return ResponseEntity.ok(orderService.searchOrderItem());
     }
 
+    @ParamsPrintAspect
+    @GetMapping("/item/user")
+    public ResponseEntity<?> findOrderItemByUserId(@RequestParam int userId) {
+        return ResponseEntity.ok(orderService.searchOrderItemByUserId(userId));
+    }
 
 }

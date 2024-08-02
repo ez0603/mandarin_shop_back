@@ -95,6 +95,17 @@ public class OrderService {
         return orderItemRespDtos;
     }
 
+    public List<OrderItemRespDto> searchOrderItemByUserId (int userId) {
+        List<OrderItem> orderitems = orderMapper.findOrderItemByUserId(userId);
+
+        List<OrderItemRespDto> orderItemRespDtos = new ArrayList<>();
+        for (OrderItem orderItem : orderitems) {
+            orderItemRespDtos.add(orderItem.toOrderItemRespDto());
+        }
+
+        return orderItemRespDtos;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void cancelOrder(int orderId) {
         int successCount = 0;

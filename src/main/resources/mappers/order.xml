@@ -105,17 +105,37 @@
             resultMap="OrderItemResultMap"
     >
         SELECT
-        oit.order_item_id,
-        ot.order_id,
-        pt.product_id,
-        oit.count,
-        oit.price
+            oit.order_item_id,
+            ot.order_id,
+            pt.product_id,
+            oit.count,
+            oit.price
         FROM
-        order_item_tb oit
+            order_item_tb oit
         JOIN
-        order_tb ot ON ot.order_id = oit.order_id
+            order_tb ot ON ot.order_id = oit.order_id
         JOIN
-        product_tb pt ON pt.product_id = oit.product_id
+            product_tb pt ON pt.product_id = oit.product_id
+    </select>
+
+    <select
+            id="findOrderItemByUserId"
+            resultMap="OrderItemResultMap"
+    >
+        SELECT
+            oit.order_item_id,
+            ot.order_id,
+            pt.product_id,
+            oit.count,
+            oit.price
+        FROM
+            order_item_tb oit
+        JOIN
+            order_tb ot ON ot.order_id = oit.order_id
+        JOIN
+            product_tb pt ON pt.product_id = oit.product_id
+        WHERE
+            ot.user_id = #{userId}
     </select>
 
     <update id="cancelOrder">
