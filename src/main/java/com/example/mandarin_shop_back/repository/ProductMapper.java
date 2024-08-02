@@ -19,7 +19,7 @@ public interface ProductMapper {
 
     public List<Product> getProducts();
 
-    List<Product> getMenuDetail(@Param("productId") int productId);
+    List<Product> getProductDetail(@Param("productId") int productId);
 
     public int saveProductCategory(Category category);
 

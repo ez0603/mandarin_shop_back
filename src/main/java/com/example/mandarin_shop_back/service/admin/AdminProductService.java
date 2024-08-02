@@ -31,6 +31,16 @@ public class AdminProductService {
         return products.stream().map(Product::toSearchProductRespDto).collect(Collectors.toList());
     }
 
+    public Product getProductDetail(int productId) {
+        List<Product> products = productMapper.getProductDetail(productId);
+
+        if (products != null && !products.isEmpty()) {
+            return products.get(0);
+        } else {
+            throw new RuntimeException("Product not found with id: " + productId);
+        }
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public int saveProduct(AdminRegisterProductReqDto adminRegisterProductReqDto) {
         return productMapper.saveProduct(adminRegisterProductReqDto.toEntity());

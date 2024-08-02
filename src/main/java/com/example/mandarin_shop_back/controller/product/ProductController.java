@@ -34,6 +34,11 @@ public class ProductController {
         return ResponseEntity.ok(adminProductService.getProducts());
     }
 
+    @GetMapping("/detail")
+    public ResponseEntity<?> getProductDetail(@RequestParam int productId) {
+        return ResponseEntity.ok(adminProductService.getProductDetail(productId));
+    }
+
     @PostMapping("/category")
     public ResponseEntity<?> addMenuCategory(@RequestBody AddProductCategoryReqDto addProductCategoryReqDto) {
         adminProductService.insertProductCategory(addProductCategoryReqDto);

@@ -53,19 +53,21 @@
 
     </select>
 
-    <select id="getMenuDetail" resultMap="ProductResultMap">
+    <select id="getProductDetail" resultMap="ProductResultMap">
         select
-            mt.product_id,
-            mt.product_name,
-            mt.product_price,
-            mt.product_img,
-            mt.product_description,
+            pt.product_id,
+            pt.product_name,
+            pt.product_price,
+            pt.product_img,
+            pt.product_description,
             ct.category_id,
             ct.category_name,
             ott.title_name,
             ont.option_name,
             ott.option_title_id,
-            ont.option_name_id
+            ont.option_name_id,
+            pt.create_date,
+            pt.update_date
         from
             product_tb pt
             left outer join category_tb ct on (ct.category_id = pt.category_id)
