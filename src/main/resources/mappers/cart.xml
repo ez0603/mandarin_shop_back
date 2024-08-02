@@ -36,7 +36,7 @@
     <select id="getCart" resultMap="cartResultMap">
         SELECT
             cat.cart_id,
-            ut.user_id,
+            cat.user_id,
             cat.total_price,
             cat.create_date,
             cat.update_date
