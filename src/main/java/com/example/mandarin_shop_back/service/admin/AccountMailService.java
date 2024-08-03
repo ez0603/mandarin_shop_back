@@ -83,7 +83,7 @@ public class AccountMailService {
 
     public boolean sendAuthMail(String email) {
         String authCode = createAuthCode();
-        String mailContent = "<div><h1>Table Maid</h1><div><h3>인증번호는 " + authCode + "입니다</h3></div></div>";
+        String mailContent = "<div><h1>Mandarin Shop</h1><div><h3>인증번호는 " + authCode + "입니다</h3></div></div>";
         try {
             sendEmail(email, AUTH_SUBJECT, mailContent);
             emailAuthCodeMap.put(email, authCode);
@@ -123,7 +123,7 @@ public class AccountMailService {
     public boolean searchAccountByMail(User user) {
         if (user == null) return false;
 
-        String mailContent = "<div><h1>Table Maid</h1><div><h3>귀하의 아이디는 " + user.getUsername() + "입니다</h3></div></div>";
+        String mailContent = "<div><h1>Mandarin Shop</h1><div><h3>귀하의 아이디는 " + user.getUsername() + "입니다</h3></div></div>";
         try {
             sendEmail(user.getEmail(), ACCOUNT_FIND_SUBJECT, mailContent);
             return true;
@@ -145,7 +145,7 @@ public class AccountMailService {
 
         String temporaryPassword = generateTemporaryPassword();
         String encodedPassword = passwordEncoder.encode(temporaryPassword);
-        String mailContent = "<div><h1>Table Maid</h1><div><p>안녕하세요, " + user.getUsername() + "님!</p>"
+        String mailContent = "<div><h1>Mandarin Shop</h1><div><p>안녕하세요, " + user.getUsername() + "님!</p>"
                 + "<p>임시 비밀번호는 다음과 같습니다: <strong>" + temporaryPassword + "</strong></p>"
                 + "<p>로그인 후에 비밀번호를 변경해주세요.</p></div></div>";
         try {
