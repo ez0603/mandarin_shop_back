@@ -93,5 +93,24 @@
             and email = #{email}
     </select>
 
+    <select id="findAccountByNameAndEmail" resultMap="UserResultMap">
+        select
+        *
+        from
+            user_tb
+        where
+            customer_name = #{customerName}
+            and email = #{email}
+    </select>
+
+    <update id="updateAccountTemporaryPw">
+        update
+            user_tb
+        set
+            password = #{tempPassword}
+        where
+            user_id = #{userId}
+    </update>
+
 
 </mapper>

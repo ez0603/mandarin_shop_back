@@ -21,6 +21,8 @@ import javax.validation.constraints.Pattern;
     @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s,.-]+$", message = "유효한 주소를 입력하세요.")
     private String address;
 
+    private String authCode;
+
     public User toEntity() {
         return User.builder()
                 .customerName(customerName)

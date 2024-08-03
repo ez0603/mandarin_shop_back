@@ -6,6 +6,7 @@ target/
 
 ### SECRET ###
 src/main/resources/application-secret.yml
+src/main/resources/application.properties
 
 ### STS ###
 .apt_generated
