@@ -2,14 +2,18 @@ package com.example.mandarin_shop_back.service.user;
 
 import com.example.mandarin_shop_back.dto.user.request.UserSignupReqDto;
 import com.example.mandarin_shop_back.entity.user.User;
+import com.example.mandarin_shop_back.exception.CustomException;
 import com.example.mandarin_shop_back.jwt.JwtProvider;
 import com.example.mandarin_shop_back.repository.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.validation.ConstraintViolationException;
 
 @Service
 public class UserAuthService {
@@ -28,8 +32,20 @@ public class UserAuthService {
         String encodedPassword = passwordEncoder.encode(userSignupReqDto.getPassword());
         user.setPassword(encodedPassword);
 
-        userMapper.saveUser(user);
-        System.out.println("유저 서비스옴?");
+
+        try {
+            userMapper.saveUser(user);
+        } catch (DataIntegrityViolationException e) {
+            String message = e.getMostSpecificCause().getMessage();
+            if (message.contains("user_tb.username_UNIQUE")) {
+                throw new CustomException("이미 사용 중인 아이디입니다.");
+            } else if (message.contains("user_tb.email_UNIQUE")) {
+                throw new CustomException("이미 사용 중인 이메일입니다.");
+            } else if (message.contains("user_tb.phone_UNIQUE")) {
+                throw new CustomException("이미 사용 중인 휴대폰 번호입니다.");
+            }
+            throw e;
+        }
     }
 
     public String userSignin(UserSignupReqDto userSignupReqDto) {
