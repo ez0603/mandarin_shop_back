@@ -41,10 +41,6 @@ public class JwtProvider {
         this.userMapper = userMapper;
     }
 
-    public String generateToken(Admin admin) {
-        return generateToken(admin.getAdminId(), admin.getAdminName(), admin.getAuthorities());
-    }
-
     public String generateUserToken(User user) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 7)); // 7일 후 만료
@@ -58,13 +54,13 @@ public class JwtProvider {
                 .compact();
     }
 
-    private String generateToken(int id, String username, Collection<? extends GrantedAuthority> authorities) {
+    public String generateAdminToken(Admin admin) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 20)); // 20일 후 만료
 
         return Jwts.builder()
-                .claim("id", id)
-                .claim("username", username)
+                .claim("adminId", admin.getAdminId())
+                .claim("adminName", admin.getAdminName())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -80,7 +76,6 @@ public class JwtProvider {
 
     public Claims getClaims(String token) {
         try {
-            log.info("Parsing JWT: {}", token); // 로그 추가
             return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
@@ -98,18 +93,18 @@ public class JwtProvider {
             return null;
         }
 
+        String adminName = claims.get("adminName", String.class);
         String username = claims.get("username", String.class);
-        log.info("Username from token: {}", username);
 
-        if (claims.containsKey("adminName")) {
-            Admin admin = adminMapper.findAdminByUsername(username);
+        if (adminName != null) {
+            Admin admin = adminMapper.findAdminByUsername(adminName);
             if (admin == null) {
-                log.error("No admin found with username: " + username);
+                log.error("No admin found with adminName: " + adminName);
                 return null;
             }
             PrincipalAdmin principalAdmin = admin.toPrincipalAdmin();
             return new UsernamePasswordAuthenticationToken(principalAdmin, null, principalAdmin.getAuthorities());
-        } else {
+        } else if (username != null) {
             User user = userMapper.findUserByUsername(username);
             if (user == null) {
                 log.error("No user found with username: " + username);
@@ -117,6 +112,9 @@ public class JwtProvider {
             }
             PrincipalUser principalUser = user.toPrincipalUser();
             return new UsernamePasswordAuthenticationToken(principalUser, null, principalUser.getAuthorities());
+        } else {
+            log.error("Username or adminName is not recognized.");
+            return null;
         }
     }
 

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -11,11 +12,11 @@ import java.util.List;
 public class PermitAllFilter extends GenericFilter {
 
     private static final List<String> EXCLUDED_PATHS = List.of(
-            "/auth",
-            "/user",
-            "/mail",
-            "/account",
-            "/product"
+            "/auth/**",
+            "/user/**",
+            "/mail/**",
+            "/account/**",
+            "/product/**"
     );
 
     @Override

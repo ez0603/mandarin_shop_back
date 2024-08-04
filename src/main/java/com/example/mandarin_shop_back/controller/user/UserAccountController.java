@@ -28,11 +28,12 @@ public class UserAccountController {
     public ResponseEntity<?> getUserPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof PrincipalUser)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not authenticated");
+            return ResponseEntity.status(HttpStatus.OK).body("User is not authenticated");
         }
         PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
         return ResponseEntity.ok(principalUser);
     }
+
 
     @ParamsPrintAspect
     @ValidAspect
