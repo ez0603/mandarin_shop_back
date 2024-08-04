@@ -8,53 +8,55 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class JwtAuthenticationFilter extends GenericFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtProvider jwtProvider;
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
-
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Boolean isPermitAll = (Boolean) request.getAttribute("isPermitAll");
 
-        if (isPermitAll == null || !isPermitAll) { // ! (not)을 걸어놨기 때문에 인증이 필요함
-            String accessToken = request.getHeader("Authorization");
+        // 인증이 필요없는 엔드포인트는 필터를 거치지 않음
+        if (isPermitAll != null && isPermitAll) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            if (accessToken != null && accessToken.startsWith("Bearer ")) {
-                String removedBearerToken = jwtProvider.removeBearer(accessToken);
-                Claims claims;
+        String accessToken = request.getHeader("Authorization");
 
-                try {
-                    claims = jwtProvider.getClaims(removedBearerToken);
-                    if (claims == null) {
-                        throw new Exception("Invalid JWT token");
-                    }
-                } catch (Exception e) {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED); // 인증실패 (401 에러)
-                    return;
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
+            String removedBearerToken = jwtProvider.removeBearer(accessToken);
+            Claims claims;
+
+            try {
+                claims = jwtProvider.getClaims(removedBearerToken);
+                if (claims == null) {
+                    throw new Exception("Invalid JWT token");
                 }
-
-                Authentication authentication = jwtProvider.getAuthentication(claims);
-
-                if (authentication == null) {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED); // 인증실패
-                    return;
-                }
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED); // 인증실패
+            } catch (Exception e) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT token is not valid"); // 인증실패 (401 에러)
                 return;
             }
+
+            Authentication authentication = jwtProvider.getAuthentication(claims);
+
+            if (authentication == null) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT token is not valid"); // 인증실패
+                return;
+            }
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authorization header is missing or invalid"); // 인증실패
+            return;
         }
 
         filterChain.doFilter(request, response);

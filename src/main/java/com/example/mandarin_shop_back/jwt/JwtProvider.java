@@ -58,6 +58,7 @@ public class JwtProvider {
                 .compact();
     }
 
+
     private String generateToken(int id, String username, Collection<? extends GrantedAuthority> authorities) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 20)); // 20일 후 만료
@@ -80,7 +81,6 @@ public class JwtProvider {
 
     public Claims getClaims(String token) {
         try {
-            log.info("Parsing JWT: {}", token); // 로그 추가
             return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
@@ -131,4 +131,6 @@ public class JwtProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
+
+
 }

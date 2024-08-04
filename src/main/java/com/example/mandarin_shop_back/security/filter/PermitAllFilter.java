@@ -35,10 +35,13 @@ public class PermitAllFilter extends GenericFilter {
         for(String antMatcher : antMatchers) {
             if(uri.startsWith(antMatcher)) {
                 request.setAttribute("isPermitAll", true);
+                break;
             }
         }
 
         filterChain.doFilter(request, response);
 
     }
+
+
 }
