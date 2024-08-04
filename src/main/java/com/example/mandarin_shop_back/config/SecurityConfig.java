@@ -47,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .addFilterAfter(permitAllFilter, LogoutFilter.class)
+                .addFilterBefore(permitAllFilter, LogoutFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(mailSessionFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
