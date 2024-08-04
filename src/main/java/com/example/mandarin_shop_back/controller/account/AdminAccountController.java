@@ -4,11 +4,10 @@ package com.example.mandarin_shop_back.controller.account;
 import com.example.mandarin_shop_back.aop.annotation.ParamsPrintAspect;
 import com.example.mandarin_shop_back.aop.annotation.ValidAspect;
 import com.example.mandarin_shop_back.dto.account.request.EditPasswordReqDto;
-import com.example.mandarin_shop_back.entity.account.Admin;
-import com.example.mandarin_shop_back.entity.account.AdminRoleRegister;
-import com.example.mandarin_shop_back.security.PrincipalUser;
+import com.example.mandarin_shop_back.security.PrincipalAdmin;
 import com.example.mandarin_shop_back.service.admin.AdminAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,11 +24,13 @@ public class AdminAccountController {
     private AdminAccountService adminAccountService;
 
     @GetMapping("/principal")
-    public ResponseEntity<?> getPrincipal() {
+    public ResponseEntity<?> getAdminPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication);
-        PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
-        return ResponseEntity.ok(principalUser);
+        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof PrincipalAdmin)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not authenticated as an admin");
+        }
+        PrincipalAdmin principalAdmin = (PrincipalAdmin) authentication.getPrincipal();
+        return ResponseEntity.ok(principalAdmin);
     }
 
     @ParamsPrintAspect

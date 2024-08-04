@@ -12,50 +12,67 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class UserAuthService {
+
     @Autowired
     private UserMapper userMapper;
+
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
     @Autowired
     private JwtProvider jwtProvider;
 
-    @Transactional(rollbackFor = Exception.class) // 회원가입
-    public void signup(UserSignupReqDto userSignupReqDto) {
-        User user = userSignupReqDto.toEntity();
+    private static final Logger logger = LoggerFactory.getLogger(UserAuthService.class);
 
+    @Transactional(rollbackFor = Exception.class)
+    public void signup(UserSignupReqDto userSignupReqDto) {
+        logger.info("회원가입 요청: {}", userSignupReqDto);
+
+        User user = userSignupReqDto.toEntity();
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userSignupReqDto.getPassword());
         user.setPassword(encodedPassword);
 
-
         try {
             userMapper.saveUser(user);
+            logger.info("회원가입 성공: {}", user);
         } catch (DataIntegrityViolationException e) {
             String message = e.getMostSpecificCause().getMessage();
             if (message.contains("user_tb.username_UNIQUE")) {
+                logger.error("이미 사용 중인 아이디입니다.");
                 throw new CustomException("이미 사용 중인 아이디입니다.");
             } else if (message.contains("user_tb.email_UNIQUE")) {
+                logger.error("이미 사용 중인 이메일입니다.");
                 throw new CustomException("이미 사용 중인 이메일입니다.");
             } else if (message.contains("user_tb.phone_UNIQUE")) {
+                logger.error("이미 사용 중인 휴대폰 번호입니다.");
                 throw new CustomException("이미 사용 중인 휴대폰 번호입니다.");
             }
+            logger.error("회원가입 중 오류 발생: {}", message);
             throw e;
         }
     }
 
     public String userSignin(UserSignupReqDto userSignupReqDto) {
+        logger.info("로그인 요청: {}", userSignupReqDto);
+
         User user = userMapper.findUserByUsername(userSignupReqDto.getUsername());
         if (user == null) {
+            logger.error("사용자 정보를 확인하세요. 사용자 이름: {}", userSignupReqDto.getUsername());
             throw new UsernameNotFoundException("사용자 정보를 확인하세요");
         }
         if (!passwordEncoder.matches(userSignupReqDto.getPassword(), user.getPassword())) {
+            logger.error("비밀번호가 일치하지 않습니다. 사용자 이름: {}", userSignupReqDto.getUsername());
             throw new BadCredentialsException("사용자 정보를 확인하세요");
         }
-        return jwtProvider.generateUserToken(user);
+
+        String token = jwtProvider.generateUserToken(user);
+        logger.info("토큰 발급 성공: {}", token);
+        return token;
     }
 }

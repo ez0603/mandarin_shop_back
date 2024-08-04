@@ -99,7 +99,7 @@
         from
             user_tb
         where
-            customer_name = #{customerName}
+            username = #{username}
             and email = #{email}
     </select>
 

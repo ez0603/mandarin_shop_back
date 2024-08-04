@@ -4,10 +4,11 @@ package com.example.mandarin_shop_back.controller.user;
 import com.example.mandarin_shop_back.aop.annotation.ParamsPrintAspect;
 import com.example.mandarin_shop_back.aop.annotation.ValidAspect;
 import com.example.mandarin_shop_back.dto.account.request.EditPasswordReqDto;
+import com.example.mandarin_shop_back.security.PrincipalAdmin;
 import com.example.mandarin_shop_back.security.PrincipalUser;
-import com.example.mandarin_shop_back.service.admin.AdminAccountService;
 import com.example.mandarin_shop_back.service.user.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,14 +22,14 @@ import javax.validation.Valid;
 public class UserAccountController {
 
     @Autowired
-    private AdminAccountService adminAccountService;
-    @Autowired
     private UserAccountService userAccountService;
 
     @GetMapping("/principal")
-    public ResponseEntity<?> getPrincipal() {
+    public ResponseEntity<?> getUserPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication);
+        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof PrincipalUser)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not authenticated");
+        }
         PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
         return ResponseEntity.ok(principalUser);
     }

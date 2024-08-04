@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
 public class AccountMailService {
 
     private static final long AUTH_CODE_EXPIRATION = 60 * 3L; // 3 minutes
-    private static final String AUTH_SUBJECT = "[Table Maid] 계정 메일 인증";
+    private static final String AUTH_SUBJECT = "[Mandarin Shop] 계정 메일 인증";
     private static final String PASSWORD_RESET_SUBJECT = "임시 비밀번호 발급";
-    private static final String ACCOUNT_FIND_SUBJECT = "[Table Maid] 계정 찾기";
+    private static final String ACCOUNT_FIND_SUBJECT = "[Mandarin Shop] 계정 찾기";
 
     @Autowired
     private UserMapper userMapper;
@@ -98,8 +98,8 @@ public class AccountMailService {
         }
     }
 
-    public User searchAccountByNameAndEmail(String name, String email) {
-        return userMapper.findAccountByNameAndEmail(name, email);
+    public User findAccountUserByNameAndEmail(String customerName, String email) {
+        return userMapper.findAccountUserByNameAndEmail(customerName, email);
     }
 
     public Map<String, String> verifyEmailCode(String email, String code) {
@@ -136,7 +136,7 @@ public class AccountMailService {
         }
     }
 
-    public User searchAccountByUsernameAndEmail(String username, String email) {
+    public User findAccountByNameAndEmail(String username, String email) {
         return userMapper.findAccountByNameAndEmail(username, email);
     }
 

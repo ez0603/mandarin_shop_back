@@ -22,5 +22,5 @@ public interface UserMapper {
 
     public int updateUserAccountTemporaryPw(@Param("userId") int adminId, @Param("tempPassword") String tempPassword);
 
-    public User findAccountByNameAndEmail(@Param("customerName") String username, @Param("email") String email);
+    public User findAccountByNameAndEmail(@Param("username") String username, @Param("email") String email);
 }

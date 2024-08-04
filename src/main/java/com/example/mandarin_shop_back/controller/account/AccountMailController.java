@@ -51,7 +51,7 @@ public class AccountMailController {
     @PostMapping("/send/id")
     public ResponseEntity<?> send(HttpServletRequest request, @RequestBody UserSearchUserNameReqDto userSearchUserNameReqDto) {
         request.getSession().setAttribute("timer", new Date());
-        User user = accountMailService.searchAccountByNameAndEmail(userSearchUserNameReqDto.getUsername(), userSearchUserNameReqDto.getEmail());
+        User user = accountMailService.findAccountUserByNameAndEmail(userSearchUserNameReqDto.getCustomerName(), userSearchUserNameReqDto.getEmail());
         if(user == null){
             throw new UsernameNotFoundException("일치하는 회원정보가 없습니다.");
         }
@@ -63,9 +63,9 @@ public class AccountMailController {
     // 비밀번호 찾기
     @ParamsPrintAspect
     @PostMapping("/send/temporary/password")
-    public ResponseEntity<?> sendTemporaryPassword(HttpServletRequest request, @RequestBody UserFindPasswordReqDto adminFindPasswordReqDto) {
+    public ResponseEntity<?> sendTemporaryPassword(HttpServletRequest request, @RequestBody UserFindPasswordReqDto userFindPasswordReqDto) {
         request.getSession().setAttribute("timer", new Date());
-        User user = accountMailService.searchAccountByUsernameAndEmail(adminFindPasswordReqDto.getUsername(), adminFindPasswordReqDto.getEmail());
+        User user = accountMailService.findAccountByNameAndEmail(userFindPasswordReqDto.getUsername(), userFindPasswordReqDto.getEmail());
         if(user == null) {
             throw new UsernameNotFoundException("일치하는 회원정보가 없습니다.");
         }

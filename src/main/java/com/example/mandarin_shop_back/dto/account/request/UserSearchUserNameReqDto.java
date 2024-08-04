@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class UserSearchUserNameReqDto {
-    private String username;
+    private String customerName;
     private String email;
 }

@@ -58,6 +58,7 @@ public class ProductController {
 
     @GetMapping("/category")
     public ResponseEntity<?> getCategory() {
+        System.out.println("카테고리 요청이 도달함");
         return ResponseEntity.ok().body(adminProductService.getCategory());
     }
 

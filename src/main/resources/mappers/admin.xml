@@ -6,6 +6,7 @@
 <mapper namespace="com.example.mandarin_shop_back.repository.AdminMapper">
     <resultMap id="AdminResultMap" type="com.example.mandarin_shop_back.entity.account.Admin">
         <id property="adminId" column="admin_id" />
+        <result property="roleId" column="role_id" />
         <result property="name" column="name" />
         <result property="adminName" column="admin_name" />
         <result property="adminPassword" column="admin_password" />
@@ -22,11 +23,11 @@
         insert into
             admin_tb
         values
-            (0, #{name}, #{adminName}, #{adminPassword}, #{email}, now(), now())
+            (0, 1, #{name}, #{adminName}, #{adminPassword}, #{email}, now(), now())
     </insert>
 
     <resultMap id="RoleResultMap" type="com.example.mandarin_shop_back.entity.account.Role">
-        <id property="roleId" column="user_id" />
+        <id property="roleId" column="role_id" />
         <result property="roleName" column="role_name" />
         <result property="roleNameKor" column="role_name_kor" />
     </resultMap>
@@ -44,6 +45,7 @@
     >
         SELECT
             at.admin_id,
+            at.role_id,
             at.name,
             at.admin_name,
             at.admin_password,
@@ -67,6 +69,7 @@
     >
         select
             admin_id,
+            role_id
             admin_name,
             username,
             password,

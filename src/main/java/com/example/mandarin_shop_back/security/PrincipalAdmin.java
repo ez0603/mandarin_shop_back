@@ -1,6 +1,6 @@
 package com.example.mandarin_shop_back.security;
 
-import com.example.mandarin_shop_back.entity.user.User;
+import com.example.mandarin_shop_back.entity.account.Admin;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,31 +14,34 @@ import java.util.stream.Collectors;
 
 @Data
 @Builder
-public class PrincipalUser implements UserDetails {
-    private int userId;
+public class PrincipalAdmin implements UserDetails {
+    private int adminId;
     private int roleId;
-    private String username;
+    private String name;
+    private String adminName;
+    private String adminPassword;
     private String email;
-    private String password;
     private List<String> roles;
 
-    public PrincipalUser(User user) {
-        this.userId = user.getUserId();
-        this.roleId = user.getRoleId();
-        this.username = user.getUsername();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        this.roles = user.getAuthorities().stream()
+    public PrincipalAdmin(Admin admin) {
+        this.adminId = admin.getAdminId();
+        this.roleId = admin.getRoleId();
+        this.name = admin.getName();
+        this.adminName = admin.getAdminName();
+        this.adminPassword = admin.getAdminPassword();
+        this.email = admin.getEmail();
+        this.roles = admin.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
     }
 
-    public PrincipalUser(int userId, int roleId, String username, String email, String password, List<String> roles) {
-        this.userId = userId;
+    public PrincipalAdmin(int adminId, int roleId, String name, String adminName, String adminPassword, String email, List<String> roles) {
+        this.adminId = adminId;
         this.roleId = roleId;
-        this.username = username;
+        this.name = name;
+        this.adminName = adminName;
+        this.adminPassword = adminPassword;
         this.email = email;
-        this.password = password;
         this.roles = roles;
     }
 
@@ -54,12 +57,12 @@ public class PrincipalUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return adminPassword;
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return adminName;
     }
 
     @Override

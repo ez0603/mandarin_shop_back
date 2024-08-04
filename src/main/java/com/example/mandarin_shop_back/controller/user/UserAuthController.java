@@ -1,7 +1,6 @@
 package com.example.mandarin_shop_back.controller.user;
 
 import com.example.mandarin_shop_back.dto.user.request.UserSignupReqDto;
-import com.example.mandarin_shop_back.dto.account.request.verifyAuthCodeReqDto;
 import com.example.mandarin_shop_back.service.admin.AccountMailService;
 import com.example.mandarin_shop_back.service.user.UserAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,23 +25,24 @@ public class UserAuthController {
     @Autowired
     private AccountMailService accountMailService;
 
-    @PostMapping("/signup") // 전화번호 가입
+    @PostMapping("/signup")
     public ResponseEntity<?> userSignup(@Valid @RequestBody UserSignupReqDto userSignupReqDto, BindingResult bindingResult) {
-        System.out.println("유저 로그인 들어옴??");
         userAuthService.signup(userSignupReqDto);
-
         return ResponseEntity.created(null).body(true);
     }
 
     @PostMapping("/signin")
     public ResponseEntity<?> userSignin(@RequestBody UserSignupReqDto userSignupReqDto) {
-        System.out.println(123);
-        return ResponseEntity.ok(userAuthService.userSignin(userSignupReqDto));
+        try {
+            String token = userAuthService.userSignin(userSignupReqDto);
+            return ResponseEntity.ok(token);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(e.getMessage());
+        }
     }
 
     @PostMapping("/signup/request")
     public ResponseEntity<?> requestSignup(@Valid @RequestBody UserSignupReqDto userSignupReqDto, BindingResult bindingResult) {
-        // 이메일로 인증 코드를 전송
         accountMailService.sendAuthMail(userSignupReqDto.getEmail());
         return ResponseEntity.ok("Verification email sent");
     }

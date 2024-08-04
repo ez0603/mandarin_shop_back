@@ -4,6 +4,7 @@ import com.example.mandarin_shop_back.entity.account.Admin;
 import com.example.mandarin_shop_back.entity.user.User;
 import com.example.mandarin_shop_back.repository.AdminMapper;
 import com.example.mandarin_shop_back.repository.UserMapper;
+import com.example.mandarin_shop_back.security.PrincipalAdmin;
 import com.example.mandarin_shop_back.security.PrincipalUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -40,35 +41,37 @@ public class JwtProvider {
         this.userMapper = userMapper;
     }
 
-    public String generateToken(Admin admin) { // JWT 생성
-        int adminId = admin.getAdminId();
-        String adminName = admin.getAdminName();
-        Collection<? extends GrantedAuthority> authorities = admin.getAuthorities();
-        Date expireDate = new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 20));
-
-        return Jwts.builder()
-                .claim("adminId", adminId)
-                .claim("adminName", adminName)
-                .setExpiration(expireDate)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
+    public String generateToken(Admin admin) {
+        return generateToken(admin.getAdminId(), admin.getAdminName(), admin.getAuthorities());
     }
 
-    public String generateUserToken(User user) { // JWT 생성
-        int userId = user.getUserId();
-        String username = user.getUsername();
-        Date expireDate = new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 20));
+    public String generateUserToken(User user) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 7)); // 7일 후 만료
 
         return Jwts.builder()
-                .claim("userId", userId)
+                .claim("userId", user.getUserId())
+                .claim("username", user.getUsername())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    private String generateToken(int id, String username, Collection<? extends GrantedAuthority> authorities) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 20)); // 20일 후 만료
+
+        return Jwts.builder()
+                .claim("id", id)
                 .claim("username", username)
-                .setExpiration(expireDate)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String removeBearer(String token) { // Bearer 접두사 제거
+    public String removeBearer(String token) {
         if (!StringUtils.hasText(token)) {
             return null;
         }
@@ -76,19 +79,17 @@ public class JwtProvider {
     }
 
     public Claims getClaims(String token) {
-        Claims claims = null;
         try {
-            claims = Jwts.parserBuilder()
+            log.info("Parsing JWT: {}", token); // 로그 추가
+            return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            log.info("Claims extracted: {}", claims);
         } catch (Exception e) {
             log.error("JWT 인증 오류: {}", e.getMessage());
             return null;
         }
-        return claims;
     }
 
     public Authentication getAuthentication(Claims claims) {
@@ -97,39 +98,36 @@ public class JwtProvider {
             return null;
         }
 
+        String username = claims.get("username", String.class);
+        log.info("Username from token: {}", username);
+
         if (claims.containsKey("adminName")) {
-            String adminName = claims.get("adminName").toString();
-            log.info("Admin name from token: {}", adminName);
-            Admin admin = adminMapper.findAdminByUsername(adminName);
+            Admin admin = adminMapper.findAdminByUsername(username);
             if (admin == null) {
-                log.error("No admin found with username: " + adminName);
+                log.error("No admin found with username: " + username);
                 return null;
             }
-
-            PrincipalUser principalUser = admin.toPrincipalUser();
-            return new UsernamePasswordAuthenticationToken(principalUser, null, principalUser.getAuthorities());
-        } else if (claims.containsKey("username")) {
-            String username = claims.get("username").toString();
-            log.info("User name from token: {}", username);
+            PrincipalAdmin principalAdmin = admin.toPrincipalAdmin();
+            return new UsernamePasswordAuthenticationToken(principalAdmin, null, principalAdmin.getAuthorities());
+        } else {
             User user = userMapper.findUserByUsername(username);
             if (user == null) {
                 log.error("No user found with username: " + username);
                 return null;
             }
-
-            PrincipalUser principalUser = user.toPrincipalUser(); // Assuming a similar method exists for User
+            PrincipalUser principalUser = user.toPrincipalUser();
             return new UsernamePasswordAuthenticationToken(principalUser, null, principalUser.getAuthorities());
         }
-
-        log.error("Token does not contain necessary claims for authentication. Claims: {}", claims);
-        return null;
     }
 
-    public String generateAuthMailToken(String toMailAddress) { // 이메일 인증 토큰 생성
-        Date expireDate = new Date(System.currentTimeMillis() + (1000 * 60 * 5));
+    public String generateAuthMailToken(String toMailAddress) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + (1000 * 60 * 5)); // 5분 후 만료
+
         return Jwts.builder()
                 .claim("toMailAddress", toMailAddress)
-                .setExpiration(expireDate)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }

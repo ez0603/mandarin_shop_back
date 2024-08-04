@@ -1,30 +1,38 @@
 package com.example.mandarin_shop_back.service.user;
 
-import com.example.mandarin_shop_back.dto.product.response.OptionsRespDto;
-import com.example.mandarin_shop_back.dto.user.request.UserSignupReqDto;
-import com.example.mandarin_shop_back.entity.product.OptionName;
 import com.example.mandarin_shop_back.entity.user.User;
 import com.example.mandarin_shop_back.repository.UserMapper;
+import com.example.mandarin_shop_back.security.PrincipalUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
+
+    private final UserMapper userMapper;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    public UserService(UserMapper userMapper, BCryptPasswordEncoder passwordEncoder) {
+        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public boolean userExists(int userId) {
-        // userMapper를 사용하여 userId가 존재하는지 확인
         User user = userMapper.findUserByUserId(userId);
         return user != null;
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userMapper.findUserByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+        return new PrincipalUser(user);
+    }
 }
