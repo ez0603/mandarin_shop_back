@@ -24,6 +24,7 @@ import java.security.Key;
 import java.util.Collection;
 import java.util.Date;
 
+
 @Slf4j
 @Component
 public class JwtProvider {
@@ -41,6 +42,10 @@ public class JwtProvider {
         this.userMapper = userMapper;
     }
 
+    public String generateToken(Admin admin) {
+        return generateToken(admin.getAdminId(), admin.getAdminName(), admin.getAuthorities());
+    }
+
     public String generateUserToken(User user) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 7)); // 7일 후 만료
@@ -48,6 +53,7 @@ public class JwtProvider {
         return Jwts.builder()
                 .claim("userId", user.getUserId())
                 .claim("username", user.getUsername())
+                .claim("roleId", user.getRoleId()) // 역할 ID 추가
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -55,12 +61,31 @@ public class JwtProvider {
     }
 
     public String generateAdminToken(Admin admin) {
+        return generateToken(admin.getAdminId(), admin.getAdminName(), admin.getAuthorities(), "admin");
+    }
+
+    private String generateToken(int id, String username, Collection<? extends GrantedAuthority> authorities) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 20)); // 20일 후 만료
 
         return Jwts.builder()
-                .claim("adminId", admin.getAdminId())
-                .claim("adminName", admin.getAdminName())
+                .claim("id", id)
+                .claim("username", username)
+                .claim("roleId", authorities.stream().findFirst().get().getAuthority()) // 역할 ID 추가
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    private String generateToken(int id, String adminName, Collection<? extends GrantedAuthority> authorities, String role) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 20)); // 20일 후 만료
+
+        return Jwts.builder()
+                .claim("id", id)
+                .claim("adminName", adminName)
+                .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -93,18 +118,19 @@ public class JwtProvider {
             return null;
         }
 
-        String adminName = claims.get("adminName", String.class);
+        Integer roleId = claims.get("roleId", Integer.class); // 변경된 부분
         String username = claims.get("username", String.class);
+        log.info("Username from token: {}, RoleId from token: {}", username, roleId);
 
-        if (adminName != null) {
-            Admin admin = adminMapper.findAdminByUsername(adminName);
+        if (roleId != null && roleId == 1) { // 관리자의 역할 ID가 1이라고 가정
+            Admin admin = adminMapper.findAdminByUsername(username);
             if (admin == null) {
-                log.error("No admin found with adminName: " + adminName);
+                log.error("No admin found with username: " + username);
                 return null;
             }
             PrincipalAdmin principalAdmin = admin.toPrincipalAdmin();
             return new UsernamePasswordAuthenticationToken(principalAdmin, null, principalAdmin.getAuthorities());
-        } else if (username != null) {
+        } else {
             User user = userMapper.findUserByUsername(username);
             if (user == null) {
                 log.error("No user found with username: " + username);
@@ -112,9 +138,6 @@ public class JwtProvider {
             }
             PrincipalUser principalUser = user.toPrincipalUser();
             return new UsernamePasswordAuthenticationToken(principalUser, null, principalUser.getAuthorities());
-        } else {
-            log.error("Username or adminName is not recognized.");
-            return null;
         }
     }
 
