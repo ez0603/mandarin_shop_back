@@ -28,6 +28,12 @@ public class AdminProductService {
         return products.stream().map(Product::toSearchProductRespDto).collect(Collectors.toList());
     }
 
+    public List<AdminSearchProductRespDto> getProductCategory(int categoryId) {
+        List<Product> products = productMapper.getProductCategory(categoryId);
+
+        return products.stream().map(Product::toSearchProductRespDto).collect(Collectors.toList());
+    }
+
     public Product getProductDetail(int productId) {
         List<Product> products = productMapper.getProductDetail(productId);
 

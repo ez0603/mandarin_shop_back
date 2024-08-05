@@ -34,6 +34,11 @@ public class ProductController {
         return ResponseEntity.ok(adminProductService.getProducts());
     }
 
+    @GetMapping("/products/category")
+    public ResponseEntity<?> getProductCategory(@RequestParam int categoryId) {
+        return ResponseEntity.ok(adminProductService.getProductCategory(categoryId));
+    }
+
     @GetMapping("/detail")
     public ResponseEntity<?> getProductDetail(@RequestParam int productId) {
         return ResponseEntity.ok(adminProductService.getProductDetail(productId));

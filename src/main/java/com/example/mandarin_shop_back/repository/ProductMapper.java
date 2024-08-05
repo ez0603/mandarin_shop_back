@@ -19,6 +19,8 @@ public interface ProductMapper {
 
     public List<Product> getProducts();
 
+    public List<Product> getProductCategory(@Param("categoryId") int categoryId);
+
     List<Product> getProductDetail(@Param("productId") int productId);
 
     public int saveProductCategory(Category category);
