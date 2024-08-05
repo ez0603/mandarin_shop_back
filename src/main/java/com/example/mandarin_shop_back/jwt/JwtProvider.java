@@ -41,6 +41,7 @@ public class JwtProvider {
     public String generateUserToken(User user) {
         int userId = user.getUserId();
         String username = user.getUsername();
+        int roleId = user.getRoleId(); // role_id를 가져옴
         Date expireDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 20));
 
         if (username == null) {
@@ -51,6 +52,7 @@ public class JwtProvider {
         String token = Jwts.builder()
                 .claim("userId", userId)
                 .claim("username", username)
+                .claim("role_id", roleId) // role_id를 토큰에 추가
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -62,6 +64,7 @@ public class JwtProvider {
     public String generateAdminToken(Admin admin) {
         int adminId = admin.getAdminId();
         String adminName = admin.getAdminName();
+        int roleId = admin.getRoleId(); // 관리자 역할 ID는 1로 설정
         Date expireDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 20));
 
         if (adminName == null) {
@@ -72,6 +75,7 @@ public class JwtProvider {
         String token = Jwts.builder()
                 .claim("adminId", adminId)
                 .claim("adminName", adminName)
+                .claim("role_id", roleId) // role_id를 토큰에 추가
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -112,10 +116,11 @@ public class JwtProvider {
 
         String username = claims.get("username", String.class);
         String adminName = claims.get("adminName", String.class);
+        Integer roleId = claims.get("role_id", Integer.class);
 
-        log.info("Extracted from claims - username: {}, adminName: {}", username, adminName);
+        log.info("Extracted from claims - username: {}, adminName: {}, role_id: {}", username, adminName, roleId);
 
-        if (adminName != null) { // 관리자
+        if (roleId != null && roleId == 1 && adminName != null) { // 관리자
             Admin admin = adminMapper.findAdminByUsername(adminName);
             if (admin == null) {
                 log.error("No admin found with username: " + adminName);
@@ -124,7 +129,7 @@ public class JwtProvider {
             PrincipalAdmin principalAdmin = admin.toPrincipalAdmin();
             log.info("Admin authenticated: {}", adminName);
             return new UsernamePasswordAuthenticationToken(principalAdmin, null, principalAdmin.getAuthorities());
-        } else if (username != null) { // 사용자
+        } else if (roleId != null && roleId == 2 && username != null) { // 사용자
             User user = userMapper.findUserByUsername(username);
             if (user == null) {
                 log.error("No user found with username: " + username);
@@ -134,8 +139,9 @@ public class JwtProvider {
             log.info("User authenticated: {}", username);
             return new UsernamePasswordAuthenticationToken(principalUser, null, principalUser.getAuthorities());
         } else {
-            log.error("Both username and adminName are null in claims.");
+            log.error("Invalid role_id or both username and adminName are null in claims.");
             return null;
         }
     }
+
 }
