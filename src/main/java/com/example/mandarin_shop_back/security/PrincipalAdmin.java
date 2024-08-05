@@ -1,6 +1,5 @@
 package com.example.mandarin_shop_back.security;
 
-import com.example.mandarin_shop_back.entity.account.Admin;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,9 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -18,6 +15,7 @@ public class PrincipalAdmin implements UserDetails {
     private int adminId;
     private String adminName;
     private String email;
+    private int roleId; // 추가된 필드
     private List<SimpleGrantedAuthority> authorities;
 
     @Override

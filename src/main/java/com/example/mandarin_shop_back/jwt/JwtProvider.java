@@ -16,9 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Collections;
 import java.util.Date;
 
 @Slf4j
@@ -41,7 +43,7 @@ public class JwtProvider {
     public String generateUserToken(User user) {
         int userId = user.getUserId();
         String username = user.getUsername();
-        int roleId = user.getRoleId(); // role_id를 가져옴
+        int roleId = user.getRoleId();
         Date expireDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 20));
 
         if (username == null) {
@@ -52,7 +54,7 @@ public class JwtProvider {
         String token = Jwts.builder()
                 .claim("userId", userId)
                 .claim("username", username)
-                .claim("role_id", roleId) // role_id를 토큰에 추가
+                .claim("role_id", roleId) // Add role_id to the token
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -64,7 +66,7 @@ public class JwtProvider {
     public String generateAdminToken(Admin admin) {
         int adminId = admin.getAdminId();
         String adminName = admin.getAdminName();
-        int roleId = admin.getRoleId(); // 관리자 역할 ID는 1로 설정
+        int roleId = 1; // Assuming role_id 1 is for admin
         Date expireDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 20));
 
         if (adminName == null) {
@@ -75,7 +77,7 @@ public class JwtProvider {
         String token = Jwts.builder()
                 .claim("adminId", adminId)
                 .claim("adminName", adminName)
-                .claim("role_id", roleId) // role_id를 토큰에 추가
+                .claim("role_id", roleId) // Add role_id to the token
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -120,22 +122,34 @@ public class JwtProvider {
 
         log.info("Extracted from claims - username: {}, adminName: {}, role_id: {}", username, adminName, roleId);
 
-        if (roleId != null && roleId == 1 && adminName != null) { // 관리자
+        if (roleId == 1 && adminName != null) { // 관리자
             Admin admin = adminMapper.findAdminByUsername(adminName);
             if (admin == null) {
                 log.error("No admin found with username: " + adminName);
                 return null;
             }
-            PrincipalAdmin principalAdmin = admin.toPrincipalAdmin();
+            PrincipalAdmin principalAdmin = PrincipalAdmin.builder()
+                    .adminId(admin.getAdminId())
+                    .adminName(admin.getAdminName())
+                    .email(admin.getEmail())
+                    .roleId(roleId)
+                    .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")))
+                    .build();
             log.info("Admin authenticated: {}", adminName);
             return new UsernamePasswordAuthenticationToken(principalAdmin, null, principalAdmin.getAuthorities());
-        } else if (roleId != null && roleId == 2 && username != null) { // 사용자
+        } else if (roleId == 2 && username != null) { // 사용자
             User user = userMapper.findUserByUsername(username);
             if (user == null) {
                 log.error("No user found with username: " + username);
                 return null;
             }
-            PrincipalUser principalUser = user.toPrincipalUser();
+            PrincipalUser principalUser = PrincipalUser.builder()
+                    .userId(user.getUserId())
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .roleId(roleId)
+                    .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
+                    .build();
             log.info("User authenticated: {}", username);
             return new UsernamePasswordAuthenticationToken(principalUser, null, principalUser.getAuthorities());
         } else {
@@ -143,5 +157,4 @@ public class JwtProvider {
             return null;
         }
     }
-
 }
