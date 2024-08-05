@@ -2,6 +2,7 @@ package com.example.mandarin_shop_back.service.admin;
 
 import com.example.mandarin_shop_back.entity.account.Admin;
 import com.example.mandarin_shop_back.entity.user.User;
+import com.example.mandarin_shop_back.repository.AdminMapper;
 import com.example.mandarin_shop_back.repository.UserMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,8 @@ public class AccountMailService {
     // In-memory store for email verification codes
     private final Map<String, String> emailAuthCodeMap = new ConcurrentHashMap<>();
     private final Map<String, Long> emailAuthCodeExpiryMap = new ConcurrentHashMap<>();
+    @Autowired
+    private AdminMapper adminMapper;
 
     private String createAuthCode() {
         int leftLimit = 48; // number '0'
@@ -102,6 +105,10 @@ public class AccountMailService {
         return userMapper.findAccountUserByNameAndEmail(customerName, email);
     }
 
+ public Admin findAccountAdminByNameAndEmail(String name, String email) {
+        return adminMapper.findAccountByNameAndEmail(name, email);
+    }
+
     public Map<String, String> verifyEmailCode(String email, String code) {
         Long expiryTime = emailAuthCodeExpiryMap.get(email);
         if (expiryTime == null || System.currentTimeMillis() > expiryTime) {
@@ -136,8 +143,28 @@ public class AccountMailService {
         }
     }
 
+    public boolean searchAdminAccountByMail(Admin admin) {
+        if (admin == null) return false;
+
+        String mailContent = "<div><h1>Mandarin Shop</h1><div><h3>귀하의 아이디는 " + admin.getAdminName() + "입니다</h3></div></div>";
+        try {
+            sendEmail(admin.getEmail(), ACCOUNT_FIND_SUBJECT, mailContent);
+            return true;
+        } catch (MessagingException e) {
+            logger.error("Failed to send account search email", e);
+            return false;
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid email configuration", e);
+            return false;
+        }
+    }
+
     public User findAccountByNameAndEmail(String username, String email) {
         return userMapper.findAccountByNameAndEmail(username, email);
+    }
+
+    public Admin findAccountByAdminNameAndEmail(String adminName, String email) {
+        return adminMapper.findAccountByUserNameAndEmail(adminName, email);
     }
 
     public boolean sendTemporaryPassword(User user) {
@@ -151,6 +178,27 @@ public class AccountMailService {
         try {
             sendEmail(user.getEmail(), PASSWORD_RESET_SUBJECT, mailContent);
             userMapper.updateUserAccountTemporaryPw(user.getUserId(), encodedPassword);
+            return true;
+        } catch (MessagingException e) {
+            logger.error("Failed to send temporary password email", e);
+            return false;
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid email configuration", e);
+            return false;
+        }
+    }
+
+    public boolean sendTemporaryAdminPassword(Admin admin) {
+        if (admin == null) return false;
+
+        String temporaryPassword = generateTemporaryPassword();
+        String encodedPassword = passwordEncoder.encode(temporaryPassword);
+        String mailContent = "<div><h1>Mandarin Shop</h1><div><p>안녕하세요, " + admin.getAdminName() + "님!</p>"
+                + "<p>임시 비밀번호는 다음과 같습니다: <strong>" + temporaryPassword + "</strong></p>"
+                + "<p>로그인 후에 비밀번호를 변경해주세요.</p></div></div>";
+        try {
+            sendEmail(admin.getEmail(), PASSWORD_RESET_SUBJECT, mailContent);
+            userMapper.updateUserAccountTemporaryPw(admin.getAdminId(), encodedPassword);
             return true;
         } catch (MessagingException e) {
             logger.error("Failed to send temporary password email", e);
