@@ -56,6 +56,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/inventory/**",
                         "/public/**",
                         "/cart/**",
+                        "/admin/auth/signin",
+                        "/admin/signup",
                         "/user/signin",
                         "/user/signup")
                 .permitAll()

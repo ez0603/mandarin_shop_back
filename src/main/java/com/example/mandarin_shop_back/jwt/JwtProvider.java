@@ -115,37 +115,27 @@ public class JwtProvider {
 
         log.info("Extracted from claims - username: {}, adminName: {}", username, adminName);
 
-        if (adminName != null) {
+        if (adminName != null) { // 관리자
             Admin admin = adminMapper.findAdminByUsername(adminName);
             if (admin == null) {
                 log.error("No admin found with username: " + adminName);
                 return null;
             }
             PrincipalAdmin principalAdmin = admin.toPrincipalAdmin();
+            log.info("Admin authenticated: {}", adminName);
             return new UsernamePasswordAuthenticationToken(principalAdmin, null, principalAdmin.getAuthorities());
-        } else if (username != null) {
+        } else if (username != null) { // 사용자
             User user = userMapper.findUserByUsername(username);
             if (user == null) {
                 log.error("No user found with username: " + username);
                 return null;
             }
             PrincipalUser principalUser = user.toPrincipalUser();
+            log.info("User authenticated: {}", username);
             return new UsernamePasswordAuthenticationToken(principalUser, null, principalUser.getAuthorities());
         } else {
             log.error("Both username and adminName are null in claims.");
             return null;
         }
-    }
-
-    public String generateAuthMailToken(String toMailAddress) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + (1000 * 60 * 5)); // 5분 후 만료
-
-        return Jwts.builder()
-                .claim("toMailAddress", toMailAddress)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
     }
 }

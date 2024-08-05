@@ -14,6 +14,7 @@ public class PermitAllFilter extends GenericFilter {
     private static final List<String> EXCLUDED_PATHS = List.of(
             "/auth/**",
             "/user/**",
+            "/admin/**",
             "/mail/**",
             "/account/**",
             "/product/**"
