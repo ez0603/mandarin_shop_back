@@ -15,17 +15,6 @@
         <result property="updateDate" column="update_date" />
     </resultMap>
 
-    <insert id="saveAdmin"
-            parameterType="com.example.mandarin_shop_back.entity.account.Admin"
-            keyProperty="adminId"
-            useGeneratedKeys="true"
-    >
-        insert into
-            admin_tb
-        values
-            (0, 1, #{name}, #{adminName}, #{adminPassword}, #{email}, now(), now())
-    </insert>
-
     <resultMap id="RoleResultMap" type="com.example.mandarin_shop_back.entity.account.Role">
         <id property="roleId" column="role_id" />
         <result property="roleName" column="role_name" />
@@ -38,6 +27,17 @@
         <result property="roleId" column="role_id" />
         <association property="role" resultMap="RoleResultMap" />
     </resultMap>
+
+    <insert id="saveAdmin"
+            parameterType="com.example.mandarin_shop_back.entity.account.Admin"
+            keyProperty="adminId"
+            useGeneratedKeys="true"
+    >
+        insert into
+        admin_tb
+        values
+        (0, 1, #{name}, #{adminName}, #{adminPassword}, #{email}, now(), now())
+    </insert>
 
     <select id="findAdminByUsername"
             parameterType="string"

@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -33,12 +30,8 @@ public class UserAuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> userSignin(@RequestBody UserSignupReqDto userSignupReqDto) {
-        try {
-            String token = userAuthService.userSignin(userSignupReqDto);
-            return ResponseEntity.ok(token);
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body(e.getMessage());
-        }
+        System.out.println("로그인 성공");
+        return ResponseEntity.ok(userAuthService.userSignin(userSignupReqDto));
     }
 
     @PostMapping("/signup/request")
@@ -59,5 +52,10 @@ public class UserAuthController {
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
         }
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<?> getUserAuth() {
+        return ResponseEntity.ok().body(userAuthService.getAllUser());
     }
 }

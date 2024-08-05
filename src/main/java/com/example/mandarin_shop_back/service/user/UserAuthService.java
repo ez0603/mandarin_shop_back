@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 @Service
 public class UserAuthService {
 
@@ -61,18 +62,27 @@ public class UserAuthService {
     public String userSignin(UserSignupReqDto userSignupReqDto) {
         logger.info("로그인 요청: {}", userSignupReqDto);
 
-        User user = userMapper.findUserByUsername(userSignupReqDto.getUsername());
-        if (user == null) {
-            logger.error("사용자 정보를 확인하세요. 사용자 이름: {}", userSignupReqDto.getUsername());
-            throw new UsernameNotFoundException("사용자 정보를 확인하세요");
-        }
-        if (!passwordEncoder.matches(userSignupReqDto.getPassword(), user.getPassword())) {
-            logger.error("비밀번호가 일치하지 않습니다. 사용자 이름: {}", userSignupReqDto.getUsername());
-            throw new BadCredentialsException("사용자 정보를 확인하세요");
-        }
+        try {
+            User user = userMapper.findUserByUsername(userSignupReqDto.getUsername());
+            if (user == null) {
+                logger.error("사용자 정보를 확인하세요. 사용자 이름: {}", userSignupReqDto.getUsername());
+                throw new UsernameNotFoundException("사용자 정보를 확인하세요");
+            }
+            if (!passwordEncoder.matches(userSignupReqDto.getPassword(), user.getPassword())) {
+                logger.error("비밀번호가 일치하지 않습니다. 사용자 이름: {}", userSignupReqDto.getUsername());
+                throw new BadCredentialsException("사용자 정보를 확인하세요");
+            }
 
-        String token = jwtProvider.generateUserToken(user);
-        logger.info("토큰 발급 성공: {}", token);
-        return token;
+            String token = jwtProvider.generateUserToken(user);
+            logger.info("토큰 발급 성공: {}", token);
+            return token;
+        } catch (Exception e) {
+            logger.error("로그인 중 오류 발생: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public List<User> getAllUser() {
+        return userMapper.getUserAuth();
     }
 }

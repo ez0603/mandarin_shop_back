@@ -17,6 +17,31 @@
         <result property="updateDate" column="update_date" />
     </resultMap>
 
+    <resultMap id="RoleResultMap" type="com.example.mandarin_shop_back.entity.account.Role">
+        <id property="roleId" column="user_id" />
+        <result property="roleName" column="role_name" />
+        <result property="roleNameKor" column="role_name_kor" />
+    </resultMap>
+
+    <resultMap id="UserAuthResultMap" type="com.example.mandarin_shop_back.entity.user.User">
+        <id property="userId" column="user_id" />
+        <result property="roleNameKor" column="role_name_kor" />
+        <result property="customerName" column="customer_name" />
+        <result property="phone" column="phone" />
+        <result property="email" column="email" />
+        <result property="address" column="address" />
+        <result property="createDate" column="create_date" />
+        <result property="updateDate" column="update_date" />
+    </resultMap>
+
+
+    <resultMap id="RoleRegisterResultMap" type="com.example.mandarin_shop_back.entity.user.UserRoleRegister">
+        <id property="roleRegisterId" column="role_register_id" />
+        <result property="userId" column="user_id" />
+        <result property="roleId" column="role_id" />
+        <association property="role" resultMap="RoleResultMap" />
+    </resultMap>
+
     <insert id="saveUser"
             parameterType="com.example.mandarin_shop_back.entity.user.User"
             keyProperty="userId"
@@ -24,6 +49,24 @@
         insert into user_tb
         values (0, 2, #{customerName}, #{username}, #{password}, #{phone}, #{email}, #{address}, now(), now())
     </insert>
+
+
+    <select id="getUserAuth" resultMap="UserAuthResultMap">
+        select
+            ut.user_id,
+            rt.role_name_kor,
+            ut.customer_name,
+            ut.phone,
+            ut.email,
+            ut.address,
+            ut.create_date,
+            ut.update_date
+        from
+            user_tb ut
+            left outer join role_tb rt on(rt.role_id = ut.role_id)
+        group by
+            user_id
+    </select>
 
 
     <select id="findUserByUsername"

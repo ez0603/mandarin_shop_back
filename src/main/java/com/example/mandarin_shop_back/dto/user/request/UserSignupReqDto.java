@@ -23,11 +23,8 @@ import javax.validation.constraints.Pattern;
 
     private String authCode;
 
-    private int roleId;
-
     public User toEntity() {
         return User.builder()
-                .roleId(roleId)
                 .customerName(customerName)
                 .username(username)
                 .password(password)

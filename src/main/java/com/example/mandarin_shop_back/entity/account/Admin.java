@@ -1,5 +1,6 @@
 package com.example.mandarin_shop_back.entity.account;
 
+import com.example.mandarin_shop_back.entity.user.UserRoleRegister;
 import com.example.mandarin_shop_back.security.PrincipalAdmin;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,17 +30,21 @@ public class Admin {
     private List<AdminRoleRegister> adminRoleRegisters;
 
     public PrincipalAdmin toPrincipalAdmin() {
-        return new PrincipalAdmin(this);
+        return PrincipalAdmin.builder()
+                .adminId(adminId)
+                .adminName(adminName)
+                .email(email)
+                .authorities(getAuthorities())
+                .build();
     }
 
     public List<SimpleGrantedAuthority> getAuthorities() {
-        if (adminRoleRegisters == null) {
-            return new ArrayList<>();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        if (adminRoleRegisters != null) {
+            for (AdminRoleRegister adminRoleRegister : adminRoleRegisters) {
+                authorities.add(new SimpleGrantedAuthority(adminRoleRegister.getRole().getRoleName()));
+            }
         }
-
-        return adminRoleRegisters.stream()
-                .filter(adminRoleRegister -> adminRoleRegister.getRole() != null && adminRoleRegister.getRole().getRoleName() != null)
-                .map(adminRoleRegister -> new SimpleGrantedAuthority(adminRoleRegister.getRole().getRoleName()))
-                .collect(Collectors.toList());
+        return authorities;
     }
 }

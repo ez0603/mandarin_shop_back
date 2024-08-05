@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDate;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -31,18 +30,22 @@ public class User {
 
     private List<UserRoleRegister> userRoleRegisters;
 
-    public PrincipalUser toPrincipalUser() {
-        return new PrincipalUser(this);
+    public List<SimpleGrantedAuthority> getAuthorities() {
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        if (userRoleRegisters != null) {
+            for (UserRoleRegister userRoleRegister : userRoleRegisters) {
+                authorities.add(new SimpleGrantedAuthority(userRoleRegister.getRole().getRoleName()));
+            }
+        }
+        return authorities;
     }
 
-    public List<SimpleGrantedAuthority> getAuthorities() {
-        if (userRoleRegisters == null) {
-            return Collections.emptyList();
-        }
-
-        return userRoleRegisters.stream()
-                .filter(userRoleRegister -> userRoleRegister.getRole() != null && userRoleRegister.getRole().getRoleName() != null)
-                .map(userRoleRegister -> new SimpleGrantedAuthority(userRoleRegister.getRole().getRoleName()))
-                .collect(Collectors.toList());
+    public PrincipalUser toPrincipalUser() {
+        return PrincipalUser.builder()
+                .userId(userId)
+                .username(username)
+                .email(email)
+                .authorities(getAuthorities())
+                .build();
     }
 }

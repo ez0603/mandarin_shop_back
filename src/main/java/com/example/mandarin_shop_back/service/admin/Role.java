@@ -1,4 +1,4 @@
-package com.example.mandarin_shop_back.entity.account;
+package com.example.mandarin_shop_back.service.admin;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,12 +11,10 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminRoleRegister {
-    private int roleAdminRegisterId;
-    private int adminId;
+public class Role {
     private int roleId;
+    private String roleName;
+    private String roleNameKor;
     private LocalDate createDate;
     private LocalDate updateDate;
-
-    private Role role;
 }

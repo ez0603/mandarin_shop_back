@@ -1,5 +1,6 @@
 package com.example.mandarin_shop_back.config;
 
+import com.example.mandarin_shop_back.jwt.JwtProvider;
 import com.example.mandarin_shop_back.security.exception.AuthEntryPoint;
 import com.example.mandarin_shop_back.security.filter.JwtAuthenticationFilter;
 import com.example.mandarin_shop_back.security.filter.MailSessionFilter;
@@ -25,10 +26,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private PermitAllFilter permitAllFilter;
 
     @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private JwtProvider jwtProvider;
 
     @Autowired
     private AuthEntryPoint authEntryPoint;
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtProvider);
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -39,15 +45,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/server/**", "/admin/**",
-                        "/product/**", "/order/**", "/user/**", "/auth/**",
-                        "/mail/**", "/send/**", "/account/**", "/inventory/**", "/public/**", "/cart/**")
+                .antMatchers(
+                        "/server/**",
+                        "/product/**",
+                        "/order/**",
+                        "/auth/**",
+                        "/mail/**",
+                        "/send/**",
+                        "/account/**",
+                        "/inventory/**",
+                        "/public/**",
+                        "/cart/**",
+                        "/user/signin",
+                        "/user/signup")
                 .permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/user/**").hasRole("USER")
                 .anyRequest()
                 .authenticated()
                 .and()
                 .addFilterBefore(permitAllFilter, LogoutFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(mailSessionFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(authEntryPoint);

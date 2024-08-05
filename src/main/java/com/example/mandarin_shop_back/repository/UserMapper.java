@@ -12,6 +12,8 @@ import java.util.List;
 public interface UserMapper {
     public int saveUser(User user);
 
+    public List<User> getUserAuth();
+
     public User findUserByUsername(String username);
 
     public User findUserByUserId(int userId);

@@ -16,14 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.security.Key;
-import java.util.Collection;
 import java.util.Date;
-
 
 @Slf4j
 @Component
@@ -42,73 +38,69 @@ public class JwtProvider {
         this.userMapper = userMapper;
     }
 
-    public String generateToken(Admin admin) {
-        return generateToken(admin.getAdminId(), admin.getAdminName(), admin.getAuthorities());
-    }
-
     public String generateUserToken(User user) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 7)); // 7일 후 만료
+        int userId = user.getUserId();
+        String username = user.getUsername();
+        Date expireDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 20));
 
-        return Jwts.builder()
-                .claim("userId", user.getUserId())
-                .claim("username", user.getUsername())
-                .claim("roleId", user.getRoleId()) // 역할 ID 추가
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
+        if (username == null) {
+            log.error("Username is null for user: " + userId);
+            throw new IllegalArgumentException("Username cannot be null");
+        }
+
+        String token = Jwts.builder()
+                .claim("userId", userId)
+                .claim("username", username)
+                .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
+        log.info("Generated user token for user: {}", username);
+        return token;
     }
 
     public String generateAdminToken(Admin admin) {
-        return generateToken(admin.getAdminId(), admin.getAdminName(), admin.getAuthorities(), "admin");
-    }
+        int adminId = admin.getAdminId();
+        String adminName = admin.getAdminName();
+        Date expireDate = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 20));
 
-    private String generateToken(int id, String username, Collection<? extends GrantedAuthority> authorities) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 20)); // 20일 후 만료
-
-        return Jwts.builder()
-                .claim("id", id)
-                .claim("username", username)
-                .claim("roleId", authorities.stream().findFirst().get().getAuthority()) // 역할 ID 추가
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    private String generateToken(int id, String adminName, Collection<? extends GrantedAuthority> authorities, String role) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 20)); // 20일 후 만료
-
-        return Jwts.builder()
-                .claim("id", id)
-                .claim("adminName", adminName)
-                .claim("role", role)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    public String removeBearer(String token) {
-        if (!StringUtils.hasText(token)) {
-            return null;
+        if (adminName == null) {
+            log.error("Admin name is null for admin: " + adminId);
+            throw new IllegalArgumentException("Admin name cannot be null");
         }
-        return token.substring("Bearer ".length());
+
+        String token = Jwts.builder()
+                .claim("adminId", adminId)
+                .claim("adminName", adminName)
+                .setExpiration(expireDate)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        log.info("Generated admin token for admin: {}", adminName);
+        return token;
     }
 
     public Claims getClaims(String token) {
+        Claims claims = null;
         try {
-            return Jwts.parserBuilder()
+            claims = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
             log.error("JWT 인증 오류: {}", e.getMessage());
-            return null;
+        }
+        return claims;
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            log.error("JWT 유효성 검사 실패: {}", e.getMessage());
+            return false;
         }
     }
 
@@ -118,19 +110,20 @@ public class JwtProvider {
             return null;
         }
 
-        Integer roleId = claims.get("roleId", Integer.class); // 변경된 부분
         String username = claims.get("username", String.class);
-        log.info("Username from token: {}, RoleId from token: {}", username, roleId);
+        String adminName = claims.get("adminName", String.class);
 
-        if (roleId != null && roleId == 1) { // 관리자의 역할 ID가 1이라고 가정
-            Admin admin = adminMapper.findAdminByUsername(username);
+        log.info("Extracted from claims - username: {}, adminName: {}", username, adminName);
+
+        if (adminName != null) {
+            Admin admin = adminMapper.findAdminByUsername(adminName);
             if (admin == null) {
-                log.error("No admin found with username: " + username);
+                log.error("No admin found with username: " + adminName);
                 return null;
             }
             PrincipalAdmin principalAdmin = admin.toPrincipalAdmin();
             return new UsernamePasswordAuthenticationToken(principalAdmin, null, principalAdmin.getAuthorities());
-        } else {
+        } else if (username != null) {
             User user = userMapper.findUserByUsername(username);
             if (user == null) {
                 log.error("No user found with username: " + username);
@@ -138,6 +131,9 @@ public class JwtProvider {
             }
             PrincipalUser principalUser = user.toPrincipalUser();
             return new UsernamePasswordAuthenticationToken(principalUser, null, principalUser.getAuthorities());
+        } else {
+            log.error("Both username and adminName are null in claims.");
+            return null;
         }
     }
 

@@ -24,13 +24,13 @@ public class AdminAccountController {
     private AdminAccountService adminAccountService;
 
     @GetMapping("/principal")
-    public ResponseEntity<?> getAdminPrincipal() {
+    public PrincipalAdmin getAdminPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof PrincipalAdmin)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not authenticated as an admin");
+        if (authentication != null && authentication.getPrincipal() instanceof PrincipalAdmin) {
+            return (PrincipalAdmin) authentication.getPrincipal();
+        } else {
+            throw new IllegalStateException("No authenticated admin found");
         }
-        PrincipalAdmin principalAdmin = (PrincipalAdmin) authentication.getPrincipal();
-        return ResponseEntity.ok(principalAdmin);
     }
 
     @ParamsPrintAspect

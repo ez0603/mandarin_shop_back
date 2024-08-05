@@ -25,15 +25,14 @@ public class UserAccountController {
     private UserAccountService userAccountService;
 
     @GetMapping("/principal")
-    public ResponseEntity<?> getUserPrincipal() {
+    public PrincipalUser getUserPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof PrincipalUser)) {
-            return ResponseEntity.status(HttpStatus.OK).body("User is not authenticated");
+        if (authentication != null && authentication.getPrincipal() instanceof PrincipalUser) {
+            return (PrincipalUser) authentication.getPrincipal();
+        } else {
+            throw new IllegalStateException("No authenticated user found");
         }
-        PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
-        return ResponseEntity.ok(principalUser);
     }
-
 
     @ParamsPrintAspect
     @ValidAspect
