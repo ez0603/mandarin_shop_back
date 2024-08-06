@@ -13,4 +13,8 @@ public class AdminSearchProductRespDto {
     private int productPrice;
     private String productImg;
     private String productDescription;
+    private int optionTitleId;
+    private String titleName;
+    private int optionNameId;
+    private String optionName;
 }

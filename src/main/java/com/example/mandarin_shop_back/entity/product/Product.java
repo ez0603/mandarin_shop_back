@@ -21,6 +21,10 @@ public class Product {
     private int productPrice;
     private String productImg;
     private String productDescription;
+    private int optionTitleId;
+    private String titleName;
+    private int optionNameId;
+    private String optionName;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 
@@ -33,6 +37,10 @@ public class Product {
                 .productImg(productImg)
                 .productDescription(productDescription)
                 .categoryName(categoryName)
+                .optionTitleId(optionTitleId)
+                .titleName(titleName)
+                .optionNameId(optionNameId)
+                .optionName(optionName)
                 .build();
     }
 }
