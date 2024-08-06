@@ -5,9 +5,12 @@ import com.example.mandarin_shop_back.entity.user.User;
 import com.example.mandarin_shop_back.exception.CustomException;
 import com.example.mandarin_shop_back.jwt.JwtProvider;
 import com.example.mandarin_shop_back.repository.UserMapper;
+import com.example.mandarin_shop_back.security.PrincipalUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,14 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 @Service
 public class UserAuthService {
 
     @Autowired
+    @Lazy
     private UserMapper userMapper;
 
     @Autowired
+    @Lazy
     private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
@@ -84,5 +90,19 @@ public class UserAuthService {
 
     public List<User> getAllUser() {
         return userMapper.getUserAuth();
+    }
+
+    public PrincipalUser loadUserByUsername(String username) {
+        User user = userMapper.findUserByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+        return PrincipalUser.builder()
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .roleId(user.getRoleId())
+                .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
+                .build();
     }
 }

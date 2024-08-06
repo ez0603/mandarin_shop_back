@@ -4,6 +4,7 @@ package com.example.mandarin_shop_back.controller.user;
 import com.example.mandarin_shop_back.aop.annotation.ParamsPrintAspect;
 import com.example.mandarin_shop_back.aop.annotation.ValidAspect;
 import com.example.mandarin_shop_back.dto.account.request.EditPasswordReqDto;
+import com.example.mandarin_shop_back.security.PrincipalDetails;
 import com.example.mandarin_shop_back.security.PrincipalUser;
 import com.example.mandarin_shop_back.service.user.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +25,16 @@ public class UserAccountController {
     private UserAccountService userAccountService;
 
     @GetMapping("/principal")
-    public ResponseEntity<?> getUserPrincipal(Authentication authentication) {
-        if (authentication == null || authentication.getPrincipal() == null) {
-            throw new IllegalStateException("No authenticated user found");
-        }
-        PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
-        return ResponseEntity.ok(principalUser);
-    }
+    public PrincipalDetails getUserPrincipal() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
 
+        if (principal instanceof PrincipalDetails) {
+            return (PrincipalDetails) principal;
+        } else {
+            throw new IllegalStateException("Authenticated principal is not a user");
+        }
+    }
 
     @ParamsPrintAspect
     @ValidAspect

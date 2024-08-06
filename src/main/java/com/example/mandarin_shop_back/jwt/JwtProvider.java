@@ -5,6 +5,7 @@ import com.example.mandarin_shop_back.entity.user.User;
 import com.example.mandarin_shop_back.repository.AdminMapper;
 import com.example.mandarin_shop_back.repository.UserMapper;
 import com.example.mandarin_shop_back.security.PrincipalAdmin;
+import com.example.mandarin_shop_back.security.PrincipalDetails;
 import com.example.mandarin_shop_back.security.PrincipalUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -19,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Collections;
 import java.util.Date;
@@ -54,7 +56,7 @@ public class JwtProvider {
         String token = Jwts.builder()
                 .claim("userId", userId)
                 .claim("username", username)
-                .claim("role_id", roleId) // Add role_id to the token
+                .claim("role_id", roleId)
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -77,7 +79,7 @@ public class JwtProvider {
         String token = Jwts.builder()
                 .claim("adminId", adminId)
                 .claim("adminName", adminName)
-                .claim("role_id", roleId) // Add role_id to the token
+                .claim("role_id", roleId)
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -110,7 +112,22 @@ public class JwtProvider {
         }
     }
 
-    public Authentication getAuthentication(Claims claims) {
+    public Authentication getAuthentication(String token) {
+        Claims claims = getClaims(token);
+        if (claims == null) {
+            return null;
+        }
+
+        PrincipalDetails principalDetails = getPrincipalDetails(claims);
+
+        if (principalDetails == null) {
+            return null;
+        }
+
+        return new UsernamePasswordAuthenticationToken(principalDetails, "", principalDetails.getAuthorities());
+    }
+
+    public PrincipalDetails getPrincipalDetails(Claims claims) {
         if (claims == null) {
             log.error("Claims are null.");
             return null;
@@ -128,33 +145,37 @@ public class JwtProvider {
                 log.error("No admin found with username: " + adminName);
                 return null;
             }
-            PrincipalAdmin principalAdmin = PrincipalAdmin.builder()
+            return PrincipalAdmin.builder()
                     .adminId(admin.getAdminId())
                     .adminName(admin.getAdminName())
                     .email(admin.getEmail())
                     .roleId(roleId)
                     .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")))
                     .build();
-            log.info("Admin authenticated: {}", adminName);
-            return new UsernamePasswordAuthenticationToken(principalAdmin, null, principalAdmin.getAuthorities());
         } else if (roleId == 2 && username != null) { // 사용자
             User user = userMapper.findUserByUsername(username);
             if (user == null) {
                 log.error("No user found with username: " + username);
                 return null;
             }
-            PrincipalUser principalUser = PrincipalUser.builder()
+            return PrincipalUser.builder()
                     .userId(user.getUserId())
                     .username(user.getUsername())
                     .email(user.getEmail())
                     .roleId(roleId)
                     .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")))
                     .build();
-            log.info("User authenticated: {}", username);
-            return new UsernamePasswordAuthenticationToken(principalUser, null, principalUser.getAuthorities());
         } else {
             log.error("Invalid role_id or both username and adminName are null in claims.");
             return null;
         }
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }

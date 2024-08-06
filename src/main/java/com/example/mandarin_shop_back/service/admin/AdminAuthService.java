@@ -6,26 +6,33 @@ import com.example.mandarin_shop_back.entity.user.User;
 import com.example.mandarin_shop_back.exception.SaveException;
 import com.example.mandarin_shop_back.jwt.JwtProvider;
 import com.example.mandarin_shop_back.repository.AdminMapper;
+import com.example.mandarin_shop_back.security.PrincipalAdmin;
 import com.example.mandarin_shop_back.service.user.UserAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+
 @Service
 public class AdminAuthService {
 
     @Autowired
+    @Lazy
     private AdminMapper adminMapper;
 
     @Autowired
     private JwtProvider jwtProvider;
 
     @Autowired
+    @Lazy
     private BCryptPasswordEncoder passwordEncoder;
 
     private static final Logger logger = LoggerFactory.getLogger(UserAuthService.class);
@@ -63,5 +70,18 @@ public class AdminAuthService {
             logger.error("로그인 중 오류 발생: {}", e.getMessage(), e);
             throw e;
         }
+    }
+    public PrincipalAdmin loadAdminByUsername(String adminName) {
+        Admin admin = adminMapper.findAdminByUsername(adminName);
+        if (admin == null) {
+            throw new UsernameNotFoundException("Admin not found with username: " + adminName);
+        }
+        return PrincipalAdmin.builder()
+                .adminId(admin.getAdminId())
+                .adminName(admin.getAdminName())
+                .email(admin.getEmail())
+                .roleId(admin.getRoleId())
+                .authorities(Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")))
+                .build();
     }
 }

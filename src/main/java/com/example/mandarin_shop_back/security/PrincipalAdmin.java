@@ -1,22 +1,35 @@
 package com.example.mandarin_shop_back.security;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 
-@Data
+@Getter
 @Builder
-public class PrincipalAdmin implements UserDetails {
-    private int adminId;
-    private String adminName;
-    private String email;
-    private int roleId; // 추가된 필드
-    private List<SimpleGrantedAuthority> authorities;
+public class PrincipalAdmin implements PrincipalDetails {
+
+    private final Integer adminId;
+    private final String adminName;
+    private final String email;
+    private final Integer roleId;
+    private final Collection<? extends GrantedAuthority> authorities;
+
+    @Override
+    public Integer getId() {
+        return adminId;
+    }
+
+    @Override
+    public String getName() {
+        return adminName;
+    }
+
+    @Override
+    public Integer getRoleId() {
+        return roleId;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -25,7 +38,7 @@ public class PrincipalAdmin implements UserDetails {
 
     @Override
     public String getPassword() {
-        return "";
+        return null; // Not needed for this example
     }
 
     @Override
