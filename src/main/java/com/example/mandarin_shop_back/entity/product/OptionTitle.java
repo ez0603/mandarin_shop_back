@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -15,6 +16,7 @@ public class OptionTitle {
     private int optionTitleId;
     private int productId;
     private String titleName;
+    private List<OptionName> optionNames;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 }

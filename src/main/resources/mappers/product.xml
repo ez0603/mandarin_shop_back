@@ -28,135 +28,135 @@
     <insert id="saveProduct" parameterType="com.example.mandarin_shop_back.entity.product.Product">
         insert into product_tb
         values(
-            0,
-            #{productName},
-            #{categoryId},
-            #{productPrice},
-            #{productImg},
-            #{productDescription},
-            now(),
-            now()
+        0,
+        #{productName},
+        #{categoryId},
+        #{productPrice},
+        #{productImg},
+        #{productDescription},
+        now(),
+        now()
         )
     </insert>
 
     <select id="getProducts" resultMap="ProductResultMap">
         SELECT
-            pt.product_id,
-            pt.product_name,
-            pt.product_price,
-            pt.product_img,
-            pt.product_description,
-            ct.category_id,
-            ct.category_name,
-            ott.title_name,
-            ont.option_name,
-            ott.option_title_id,
-            ont.option_name_id
+        pt.product_id,
+        pt.product_name,
+        pt.product_price,
+        pt.product_img,
+        pt.product_description,
+        ct.category_id,
+        ct.category_name,
+        ott.title_name,
+        ont.option_name,
+        ott.option_title_id,
+        ont.option_name_id
         FROM
-            product_tb pt
+        product_tb pt
         LEFT OUTER JOIN
-            category_tb ct ON (ct.category_id = pt.category_id)
+        category_tb ct ON (ct.category_id = pt.category_id)
         LEFT OUTER JOIN
-            option_title_tb ott ON (ott.product_id = pt.product_id)
+        option_title_tb ott ON (ott.product_id = pt.product_id)
         LEFT OUTER JOIN
-            option_name_tb ont ON (ont.option_title_id = ott.option_title_id)
+        option_name_tb ont ON (ont.option_title_id = ott.option_title_id)
 
     </select>
 
     <select id="getProductCategory" resultMap="ProductResultMap">
         SELECT
-            pt.product_id,
-            pt.product_name,
-            pt.product_price,
-            pt.product_img,
-            pt.product_description,
-            ct.category_id,
-            ct.category_name
+        pt.product_id,
+        pt.product_name,
+        pt.product_price,
+        pt.product_img,
+        pt.product_description,
+        ct.category_id,
+        ct.category_name
         FROM
-            product_tb pt
+        product_tb pt
         LEFT OUTER JOIN
-            category_tb ct
-            ON
-            ct.category_id = pt.category_id
+        category_tb ct
+        ON
+        ct.category_id = pt.category_id
         where
-            pt.category_id = #{categoryId}
+        pt.category_id = #{categoryId}
     </select>
 
     <select id="getProductDetail" resultMap="ProductResultMap">
         select
-            pt.product_id,
-            pt.product_name,
-            pt.product_price,
-            pt.product_img,
-            pt.product_description,
-            ct.category_id,
-            ct.category_name,
-            ott.title_name,
-            ont.option_name,
-            ott.option_title_id,
-            ont.option_name_id,
-            pt.create_date,
-            pt.update_date
+        pt.product_id,
+        pt.product_name,
+        pt.product_price,
+        pt.product_img,
+        pt.product_description,
+        ct.category_id,
+        ct.category_name,
+        ott.title_name,
+        ont.option_name,
+        ott.option_title_id,
+        ont.option_name_id,
+        pt.create_date,
+        pt.update_date
         from
-            product_tb pt
-            left outer join category_tb ct on (ct.category_id = pt.category_id)
-            left outer join option_title_tb ott on (ott.product_id = pt.product_id)
-            left outer join option_name_tb ont on (ont.option_title_id = ott.option_title_id)
+        product_tb pt
+        left outer join category_tb ct on (ct.category_id = pt.category_id)
+        left outer join option_title_tb ott on (ott.product_id = pt.product_id)
+        left outer join option_name_tb ont on (ont.option_title_id = ott.option_title_id)
         where
-            pt.product_id = #{productId}
+        pt.product_id = #{productId}
     </select>
 
     <update id="updateProduct">
         update
-            product_tb
+        product_tb
         set
-            product_name = #{productName},
-            product_price = #{productPrice},
-            product_img = #{productImg},
+        product_name = #{productName},
+        product_price = #{productPrice},
+        product_img = #{productImg},
         product_description = #{productDescription},
-            category_id = #{categoryId},
-            update_date = now()
+        category_id = #{categoryId},
+        update_date = now()
         where
-            product_id = #{productId}
+        product_id = #{productId}
     </update>
 
     <delete id="deleteProduct" parameterType="int">
         delete
         from
-            product_tb
+        product_tb
         where
-            product_id = #{productId}
+        product_id = #{productId}
     </delete>
 
     <insert id="saveProductCategory" parameterType="com.example.mandarin_shop_back.entity.product.Category" >
         insert into
-            category_tb
+        category_tb
         values
         (0, #{categoryName}, now(), now())
     </insert>
 
     <update id="updateProductCategory">
         update
-            category_tb
+        category_tb
         set
-            category_name = #{categoryName},
-            update_date = now()
+        category_name = #{categoryName},
+        update_date = now()
         where
-            category_id = #{categoryId}
+        category_id = #{categoryId}
     </update>
 
     <delete id="deleteProductCategory">
         delete from
-            category_tb
+        category_tb
         where
-            category_id = #{categoryId}
+        category_id = #{categoryId}
     </delete>
 
     <select id="getCategory" resultMap="CategoryResultMap">
         select
-            *
+        *
         from
-            category_tb
+        category_tb
     </select>
 
 </mapper>
