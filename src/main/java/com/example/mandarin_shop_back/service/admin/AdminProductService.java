@@ -4,6 +4,7 @@ import com.example.mandarin_shop_back.dto.product.request.*;
 import com.example.mandarin_shop_back.dto.product.response.AdminSearchProductRespDto;
 import com.example.mandarin_shop_back.dto.product.response.OptionTitlesRespDto;
 import com.example.mandarin_shop_back.dto.product.response.OptionsRespDto;
+import com.example.mandarin_shop_back.dto.product.response.ProductDetailRespDto;
 import com.example.mandarin_shop_back.entity.product.Category;
 import com.example.mandarin_shop_back.entity.product.OptionName;
 import com.example.mandarin_shop_back.entity.product.OptionTitle;
@@ -34,15 +35,53 @@ public class AdminProductService {
         return products.stream().map(Product::toSearchProductRespDto).collect(Collectors.toList());
     }
 
-    public Product getProductDetail(int productId) {
+    @Transactional(rollbackFor = Exception.class)
+    public ProductDetailRespDto getProductDetail(int productId) {
         List<Product> products = productMapper.getProductDetail(productId);
 
-        if (products != null && !products.isEmpty()) {
-            return products.get(0);
-        } else {
+        if (products == null || products.isEmpty()) {
             throw new RuntimeException("Product not found with id: " + productId);
         }
+
+        Product product = products.get(0);
+
+        Map<Integer, ProductDetailRespDto.OptionTitleDetail> optionTitleMap = new HashMap<>();
+        List<ProductDetailRespDto.OptionNameDetail> optionNames = new ArrayList<>();
+
+        for (Product prod : products) {
+            int optionTitleId = prod.getOptionTitleId();
+            if (!optionTitleMap.containsKey(optionTitleId)) {
+                ProductDetailRespDto.OptionTitleDetail optionTitle = ProductDetailRespDto.OptionTitleDetail.builder()
+                        .optionTitleId(optionTitleId)
+                        .titleName(prod.getTitleName())
+                        .build();
+                optionTitleMap.put(optionTitleId, optionTitle);
+            }
+
+            ProductDetailRespDto.OptionNameDetail optionName = ProductDetailRespDto.OptionNameDetail.builder()
+                    .optionNameId(prod.getOptionNameId())
+                    .optionName(prod.getOptionName())
+                    .optionTitleId(optionTitleId)
+                    .build();
+            optionNames.add(optionName);
+        }
+
+        return ProductDetailRespDto.builder()
+                .productId(product.getProductId())
+                .productName(product.getProductName())
+                .categoryId(product.getCategoryId())
+                .categoryName(product.getCategoryName())
+                .productPrice(product.getProductPrice())
+                .productImg(product.getProductImg())
+                .productDescription(product.getProductDescription())
+                .createDate(product.getCreateDate())
+                .updateDate(product.getUpdateDate())
+                .optionTitles(new ArrayList<>(optionTitleMap.values()))
+                .optionNames(optionNames)
+                .build();
     }
+
+
 
     @Transactional(rollbackFor = Exception.class)
     public int saveProduct(AdminRegisterProductReqDto adminRegisterProductReqDto) {

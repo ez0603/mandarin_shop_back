@@ -83,27 +83,27 @@
     </select>
 
     <select id="getProductDetail" resultMap="ProductResultMap">
-        select
-        pt.product_id,
-        pt.product_name,
-        pt.product_price,
-        pt.product_img,
-        pt.product_description,
-        ct.category_id,
-        ct.category_name,
-        ott.title_name,
-        ont.option_name,
-        ott.option_title_id,
-        ont.option_name_id,
-        pt.create_date,
-        pt.update_date
-        from
+        SELECT
+            pt.product_id,
+            pt.product_name,
+            pt.product_price,
+            pt.product_img,
+            pt.product_description,
+            pt.category_id,
+            ct.category_name,
+            ott.title_name,
+            ott.option_title_id,
+            ont.option_name_id,
+            ont.option_name,
+            pt.create_date,
+            pt.update_date
+        FROM
         product_tb pt
-        left outer join category_tb ct on (ct.category_id = pt.category_id)
-        left outer join option_title_tb ott on (ott.product_id = pt.product_id)
-        left outer join option_name_tb ont on (ont.option_title_id = ott.option_title_id)
-        where
-        pt.product_id = #{productId}
+            LEFT OUTER JOIN category_tb ct ON ct.category_id = pt.category_id
+            LEFT OUTER JOIN option_title_tb ott ON ott.product_id = pt.product_id
+            LEFT OUTER JOIN option_name_tb ont ON ont.option_title_id = ott.option_title_id
+        WHERE
+            pt.product_id = #{productId}
     </select>
 
     <update id="updateProduct">
