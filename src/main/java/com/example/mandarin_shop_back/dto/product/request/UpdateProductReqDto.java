@@ -3,6 +3,8 @@ package com.example.mandarin_shop_back.dto.product.request;
 import com.example.mandarin_shop_back.entity.product.Product;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class UpdateProductReqDto {
     private int productId;

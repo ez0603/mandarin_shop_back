@@ -10,7 +10,7 @@
         <result property="categoryId" column="category_id"/>
         <result property="categoryName" column="category_name" />
         <result property="productPrice" column="product_price"/>
-        <result property="productImg" column="product_img"/>
+        <result property="productImg" column="product_img" />
         <result property="optionTitleId" column="option_title_id"/>
         <result property="titleName" column="title_name"/>
         <result property="optionNameId" column="option_name_id"/>
