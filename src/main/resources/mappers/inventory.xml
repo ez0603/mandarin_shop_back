@@ -9,14 +9,13 @@
         <result property="productId" column="product_id"/>
         <result property="inventoryQuantity" column="inventory_quantity"/>
         <result property="changeQuantity" column="change_quantity"/>
-        <result property="inventoryLocation" column="inventory_location"/>
         <result property="createDate" column="create_date"/>
         <result property="updateDate" column="update_date"/>
     </resultMap>
 
     <insert id="saveInventory" parameterType="com.example.mandarin_shop_back.entity.inventory.Inventory" >
         insert into inventory_tb
-        values (0, #{productId}, #{inventoryQuantity}, #{changeQuantity}, #{inventoryLocation}, now(), now())
+        values (0, #{productId}, #{inventoryQuantity}, #{changeQuantity}, now(), now())
     </insert>
 
     <select id="getInventory" resultMap="inventoryResultMap">
@@ -25,7 +24,6 @@
             pt.product_id,
             it.inventory_quantity,
             it.change_quantity,
-            it.inventory_location,
             it.create_date,
             it.update_date
         FROM
@@ -43,7 +41,6 @@
             product_id = #{productId},
             inventory_quantity = #{inventoryQuantity},
             change_quantity = #{changeQuantity},
-            inventory_location = #{inventoryLocation},
             update_date = now()
         WHERE
             inventory_id = #{inventoryId}

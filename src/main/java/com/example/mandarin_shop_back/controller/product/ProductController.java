@@ -15,7 +15,8 @@ public class ProductController {
 
     @PostMapping("/products")
     public ResponseEntity<?> registerProduct(@RequestBody AdminRegisterProductReqDto adminRegisterProductReqDto) {
-        return ResponseEntity.ok().body(adminProductService.saveProduct((adminRegisterProductReqDto)));
+        adminProductService.saveProduct(adminRegisterProductReqDto);
+        return ResponseEntity.ok("Product and inventory saved successfully");
     }
 
     @PutMapping("/products")

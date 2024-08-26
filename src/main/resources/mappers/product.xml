@@ -25,7 +25,7 @@
         <result property="categoryName" column="category_name" />
     </resultMap>
 
-    <insert id="saveProduct" parameterType="com.example.mandarin_shop_back.entity.product.Product">
+    <insert id="saveProduct" parameterType="com.example.mandarin_shop_back.entity.product.Product" useGeneratedKeys="true" keyProperty="productId">
         insert into product_tb
         values(
         0,
@@ -41,25 +41,25 @@
 
     <select id="getProducts" resultMap="ProductResultMap">
         SELECT
-        pt.product_id,
-        pt.product_name,
-        pt.product_price,
-        pt.product_img,
-        pt.product_description,
-        ct.category_id,
-        ct.category_name,
-        ott.title_name,
-        ont.option_name,
-        ott.option_title_id,
-        ont.option_name_id
+            pt.product_id,
+            pt.product_name,
+            pt.product_price,
+            pt.product_img,
+            pt.product_description,
+            ct.category_id,
+            ct.category_name,
+            ott.title_name,
+            ont.option_name,
+            ott.option_title_id,
+            ont.option_name_id
         FROM
-        product_tb pt
+            product_tb pt
         LEFT OUTER JOIN
-        category_tb ct ON (ct.category_id = pt.category_id)
+            category_tb ct ON (ct.category_id = pt.category_id)
         LEFT OUTER JOIN
-        option_title_tb ott ON (ott.product_id = pt.product_id)
+            option_title_tb ott ON (ott.product_id = pt.product_id)
         LEFT OUTER JOIN
-        option_name_tb ont ON (ont.option_title_id = ott.option_title_id)
+            option_name_tb ont ON (ont.option_title_id = ott.option_title_id)
 
     </select>
 

@@ -18,7 +18,6 @@ public class Inventory {
     private int productId;
     private int inventoryQuantity;
     private int changeQuantity;
-    private String inventoryLocation;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 
@@ -28,7 +27,6 @@ public class Inventory {
                 .productId(productId)
                 .inventoryQuantity(inventoryQuantity)
                 .changeQuantity(changeQuantity)
-                .inventoryLocation(inventoryLocation)
                 .createDate(createDate)
                 .updateDate(updateDate)
                 .build();

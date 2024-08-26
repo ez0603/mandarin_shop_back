@@ -20,7 +20,6 @@ public class InventoryReqDto {
                 .productId(productId)
                 .inventoryQuantity(inventoryQuantity)
                 .changeQuantity(changeQuantity)
-                .inventoryLocation(inventoryLocation)
                 .build();
     }
 }

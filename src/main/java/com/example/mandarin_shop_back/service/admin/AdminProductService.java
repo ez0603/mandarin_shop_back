@@ -5,10 +5,12 @@ import com.example.mandarin_shop_back.dto.product.response.AdminSearchProductRes
 import com.example.mandarin_shop_back.dto.product.response.OptionTitlesRespDto;
 import com.example.mandarin_shop_back.dto.product.response.OptionsRespDto;
 import com.example.mandarin_shop_back.dto.product.response.ProductDetailRespDto;
+import com.example.mandarin_shop_back.entity.inventory.Inventory;
 import com.example.mandarin_shop_back.entity.product.Category;
 import com.example.mandarin_shop_back.entity.product.OptionName;
 import com.example.mandarin_shop_back.entity.product.OptionTitle;
 import com.example.mandarin_shop_back.entity.product.Product;
+import com.example.mandarin_shop_back.repository.InventoryMapper;
 import com.example.mandarin_shop_back.repository.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class AdminProductService {
 
     @Autowired
     private ProductMapper productMapper;
+    @Autowired
+    private InventoryMapper inventoryMapper;
 
     public List<AdminSearchProductRespDto> getProducts() {
         List<Product> products = productMapper.getProducts();
@@ -82,8 +86,16 @@ public class AdminProductService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public int saveProduct(AdminRegisterProductReqDto adminRegisterProductReqDto) {
-        return productMapper.saveProduct(adminRegisterProductReqDto.toEntity());
+    public void saveProduct(AdminRegisterProductReqDto adminRegisterProductReqDto) {
+
+        Product product = adminRegisterProductReqDto.toEntity();
+        productMapper.saveProduct(product);
+
+        Inventory inventory = new Inventory();
+        inventory.setProductId(product.getProductId());
+        inventory.setInventoryQuantity(adminRegisterProductReqDto.getInventoryQuantity());
+
+        inventoryMapper.saveInventory(inventory);
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.example.mandarin_shop_back.dto.product.request;
 
+import com.example.mandarin_shop_back.entity.inventory.Inventory;
 import com.example.mandarin_shop_back.entity.product.Product;
 import lombok.Data;
 
@@ -13,6 +14,8 @@ public class AdminRegisterProductReqDto {
     private String productImg;
     private String productDescription;
 
+    private int inventoryQuantity;
+
     public Product toEntity() {
         return Product.builder()
                 .productName(productName)
@@ -20,6 +23,13 @@ public class AdminRegisterProductReqDto {
                 .productPrice(productPrice)
                 .productImg(productImg)
                 .productDescription(productDescription)
+                .build();
+    }
+
+    public Inventory toInventoryEntity(int productId) {
+        return Inventory.builder()
+                .productId(productId)
+                .inventoryQuantity(inventoryQuantity)
                 .build();
     }
 }
