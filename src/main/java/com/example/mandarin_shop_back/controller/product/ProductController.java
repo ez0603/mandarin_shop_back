@@ -14,12 +14,12 @@ public class ProductController {
     private AdminProductService adminProductService;
 
     @PostMapping("/products")
-    public ResponseEntity<?> registerMenu(@RequestBody AdminRegisterProductReqDto adminRegisterProductReqDto) {
+    public ResponseEntity<?> registerProduct(@RequestBody AdminRegisterProductReqDto adminRegisterProductReqDto) {
         return ResponseEntity.ok().body(adminProductService.saveProduct((adminRegisterProductReqDto)));
     }
 
     @PutMapping("/products")
-    public ResponseEntity<?> updateMenu(@RequestBody UpdateProductReqDto updateProductReqDto) {
+    public ResponseEntity<?> updateProduct(@RequestBody UpdateProductReqDto updateProductReqDto) {
         adminProductService.editProduct(updateProductReqDto);
         return ResponseEntity.ok(true);
     }
