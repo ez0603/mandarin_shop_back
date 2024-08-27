@@ -14,6 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 public class OptionTitlesRespDto {
     private List<Integer> optionTitlesId;
-    private List<String> optionTitleNames; // 여러 옵션 타이틀 이름을 저장하는 리스트
-    private List<AddOptionNameReqDto> optionNames; // 옵션 이름 리스트
+    private List<String> optionTitleNames;
 }

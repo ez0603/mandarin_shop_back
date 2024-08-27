@@ -91,34 +91,7 @@ public class AdminProductService {
         // 2. inventory_tb에 재고 정보 저장
         Inventory inventory = adminRegisterProductReqDto.toInventoryEntity(product.getProductId());
         inventoryMapper.saveInventory(inventory);
-
-        // 3. 옵션 타이틀과 옵션 이름 저장
-        List<OptionTitlesRespDto> optionTitles = adminRegisterProductReqDto.getOptionTitles();
-        if (optionTitles != null) {
-            for (OptionTitlesRespDto optionTitleDto : optionTitles) {
-                if (optionTitleDto.getOptionTitleNames() != null) {
-                    for (String titleName : optionTitleDto.getOptionTitleNames()) {
-                        // OptionTitle 엔티티 생성 및 저장
-                        OptionTitle optionTitle = new OptionTitle();
-                        optionTitle.setTitleName(titleName); // 옵션 타이틀 이름 설정
-                        optionTitle.setProductId(product.getProductId()); // 상품 ID 설정
-                        productMapper.saveOptionTitle(optionTitle);
-
-                        // 옵션 타이틀 ID가 생성된 후 옵션 이름 저장
-                        if (optionTitleDto.getOptionNames() != null) {
-                            for (AddOptionNameReqDto optionNameDto : optionTitleDto.getOptionNames()) {
-                                OptionName optionNameEntity = new OptionName();
-                                optionNameEntity.setOptionName(optionNameDto.getOptionName());
-                                optionNameEntity.setProductId(product.getProductId());
-                                optionNameEntity.setOptionTitleId(optionTitle.getOptionTitleId()); // 옵션 타이틀 ID 설정
-                                productMapper.saveOptionName(optionNameEntity);
-                            }
-                        }
-                    }
-                }
-            }
         }
-    }
 
 
     @Transactional

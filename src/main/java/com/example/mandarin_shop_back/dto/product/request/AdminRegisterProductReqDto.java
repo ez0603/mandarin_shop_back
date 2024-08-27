@@ -1,11 +1,13 @@
 package com.example.mandarin_shop_back.dto.product.request;
 
-import com.example.mandarin_shop_back.dto.product.response.OptionTitlesRespDto;
-import com.example.mandarin_shop_back.dto.product.response.ProductDetailRespDto;
+import com.example.mandarin_shop_back.dto.product.response.OptionsRespDto;
 import com.example.mandarin_shop_back.entity.inventory.Inventory;
+import com.example.mandarin_shop_back.entity.product.OptionName;
+import com.example.mandarin_shop_back.entity.product.OptionTitle;
 import com.example.mandarin_shop_back.entity.product.Product;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -17,9 +19,6 @@ public class AdminRegisterProductReqDto {
     private String productDescription;
 
     private int inventoryQuantity;
-
-    private List<OptionTitlesRespDto> optionTitles;
-    private List<AddOptionNameReqDto> optionNames;
 
     public Product toEntity() {
         return Product.builder()
@@ -37,4 +36,5 @@ public class AdminRegisterProductReqDto {
                 .inventoryQuantity(inventoryQuantity)
                 .build();
     }
+
 }
