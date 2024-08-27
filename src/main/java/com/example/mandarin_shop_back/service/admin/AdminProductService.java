@@ -1,10 +1,7 @@
 package com.example.mandarin_shop_back.service.admin;
 
 import com.example.mandarin_shop_back.dto.product.request.*;
-import com.example.mandarin_shop_back.dto.product.response.AdminSearchProductRespDto;
-import com.example.mandarin_shop_back.dto.product.response.OptionTitlesRespDto;
-import com.example.mandarin_shop_back.dto.product.response.OptionsRespDto;
-import com.example.mandarin_shop_back.dto.product.response.ProductDetailRespDto;
+import com.example.mandarin_shop_back.dto.product.response.*;
 import com.example.mandarin_shop_back.entity.inventory.Inventory;
 import com.example.mandarin_shop_back.entity.product.Category;
 import com.example.mandarin_shop_back.entity.product.OptionName;
@@ -87,16 +84,15 @@ public class AdminProductService {
 
     @Transactional(rollbackFor = Exception.class)
     public void saveProduct(AdminRegisterProductReqDto adminRegisterProductReqDto) {
-
+        // 1. product_tb에 상품 저장
         Product product = adminRegisterProductReqDto.toEntity();
-        productMapper.saveProduct(product);
+        productMapper.saveProduct(product);  // 여기서 productId가 생성됩니다.
 
-        Inventory inventory = new Inventory();
-        inventory.setProductId(product.getProductId());
-        inventory.setInventoryQuantity(adminRegisterProductReqDto.getInventoryQuantity());
-
+        // 2. inventory_tb에 재고 정보 저장
+        Inventory inventory = adminRegisterProductReqDto.toInventoryEntity(product.getProductId());
         inventoryMapper.saveInventory(inventory);
     }
+
 
     @Transactional
     public void editProduct(UpdateProductReqDto updateProductReqDto) {
