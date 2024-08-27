@@ -1,6 +1,7 @@
 package com.example.mandarin_shop_back.dto.product.request;
 
 import com.example.mandarin_shop_back.dto.product.response.OptionTitlesRespDto;
+import com.example.mandarin_shop_back.dto.product.response.ProductDetailRespDto;
 import com.example.mandarin_shop_back.entity.inventory.Inventory;
 import com.example.mandarin_shop_back.entity.product.Product;
 import lombok.Data;
